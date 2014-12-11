@@ -4,6 +4,7 @@ import javax.persistence.*;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import javax.transaction.Transaction;
 import java.util.Date;
 import java.util.List;
 
@@ -31,5 +32,12 @@ public class MaterialsMngrBean {
         typedQuery.setFirstResult(from);
         typedQuery.setMaxResults(pageSize);
         return typedQuery.getResultList();
+    }
+
+    public void updateEntity(MaterialEntity e){
+        EntityTransaction et = em.getTransaction();
+        et.begin();
+        em.merge(e);
+        et.commit();
     }
 }
