@@ -34,7 +34,7 @@
                             </TitledPane>
                             <TitledPane animated="false" text="Комментарии по закупке">
                               <content>
-                                <AnchorPane id="comments" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" minWidth="200.0" prefWidth="200.0" />
+                                <AnchorPane id="comment" maxHeight="1.7976931348623157E308" maxWidth="-Infinity" minWidth="200.0" prefWidth="200.0" />
                               </content>
                             </TitledPane>
                           </panes>
