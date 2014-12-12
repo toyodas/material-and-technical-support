@@ -5,7 +5,7 @@ import com.kiev.msupport.controller.db.MaterialsMngrBean;
 import com.kiev.msupport.controller.utils.EditingCell;
 import com.kiev.msupport.controller.utils.Tables;
 import com.kiev.msupport.domain.CategoryEntity;
-import com.kiev.msupport.domain.MaterialEntity;
+import com.kiev.msupport.domain.DepartmentEntity;
 import com.kiev.msupport.domain.UnitEntity;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -14,7 +14,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.event.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.text.Text;
+import javafx.scene.input.MouseEvent;
 import javafx.util.Callback;
 
 import java.math.BigDecimal;
@@ -40,11 +40,13 @@ public class IncomeTableController implements Initializable {
     private TableColumn<IncomeTable, String> taxPrice;
 
     @FXML
-    private ComboBox<CategoryCombo> categoryIt;
+    private ComboBox<ComboItem> categoryIt;
     @FXML
     private TextField nameIt;
     @FXML
-    private ComboBox<UnitCombo> unitIt;
+    private ComboBox<ComboItem> unitIt;
+    @FXML
+    private ComboBox<ComboItem> depIt;
     @FXML
     private TextField amountIt;
     @FXML
@@ -52,7 +54,7 @@ public class IncomeTableController implements Initializable {
     @FXML
     private Button addToTableB;
     @FXML
-    private Button importFromFileB;
+    private Label error;
     @FXML
     private Button addToDBB;
 
@@ -63,24 +65,32 @@ public class IncomeTableController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-//
+//inputs config
         List<CategoryEntity> categoryEntities = db.findAll(CategoryEntity.class);
-        List<CategoryCombo> categoryCombos = new ArrayList<CategoryCombo>();
+        List<ComboItem> comboItems = new ArrayList<ComboItem>();
         for(CategoryEntity e:categoryEntities){
-            categoryCombos.add(new CategoryCombo(e.getId(), e.getName()));
+            comboItems.add(new ComboItem(e.getId(), e.getName()));
         }
-        categoryIt.setItems(FXCollections.observableArrayList(categoryCombos));
+        categoryIt.setItems(FXCollections.observableArrayList(comboItems));
 
         List<UnitEntity> unitEntities = db.findAll(UnitEntity.class);
-        List<UnitCombo> unitCombos = new ArrayList<UnitCombo>();
+        List<ComboItem> unitCombos = new ArrayList<ComboItem>();
         for(UnitEntity e:unitEntities){
-            unitCombos.add(new UnitCombo(e.getId(), e.getName()));
+            unitCombos.add(new ComboItem(e.getId(), e.getName()));
         }
 
         unitIt.setItems(FXCollections.observableArrayList(unitCombos));
 
 
-//table
+        List<DepartmentEntity> departmentEntities  = db.findAll(DepartmentEntity.class);
+        List<ComboItem> depCombos = new ArrayList<ComboItem>();
+        for(DepartmentEntity e:departmentEntities){
+            depCombos.add(new ComboItem(e.getId(), e.getName()));
+        }
+
+        depIt.setItems(FXCollections.observableArrayList(depCombos));
+
+//table config
         category.setCellValueFactory(new PropertyValueFactory<IncomeTable, String>("category"));
         name.setCellValueFactory(new PropertyValueFactory<IncomeTable, String>("name"));
         units.setCellValueFactory(new PropertyValueFactory<IncomeTable, String>("units"));
@@ -111,34 +121,71 @@ public class IncomeTableController implements Initializable {
         }
 
 
-        price.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<IncomeTable, String>>() {
+//events handling
+        EventHandler<TableColumn.CellEditEvent<IncomeTable, String>> eh1 =  new EventHandler<TableColumn.CellEditEvent<IncomeTable, String>>() {
             @Override
             public void handle(TableColumn.CellEditEvent<IncomeTable, String> t) {
                 BigDecimal amount = new BigDecimal(t.getRowValue().getPrice());
                 BigDecimal price = new BigDecimal(t.getNewValue());
-                BigDecimal withTax = amount.multiply(price);
-                BigDecimal withNoTax = withTax.multiply(new BigDecimal("0.2"));
+                BigDecimal withNoTax = amount.multiply(price);
+                BigDecimal withTax = withNoTax.add(withNoTax.multiply(new BigDecimal("0.2")));
 
-                t.getRowValue().setNoTax(withTax.toString());
-                t.getRowValue().setTax(withNoTax.toString());
+                t.getRowValue().setNoTax(withNoTax.toString());
+                t.getRowValue().setTax(withTax.toString());
             }
-        });
+        };
 
-        amount.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<IncomeTable, String>>() {
+        price.setOnEditCommit(eh1);
+
+        EventHandler<TableColumn.CellEditEvent<IncomeTable, String>> eh =
+                new EventHandler<TableColumn.CellEditEvent<IncomeTable, String>>() {
+                    @Override
+                    public void handle(TableColumn.CellEditEvent<IncomeTable, String> t) {
+                        BigDecimal amount = new BigDecimal(t.getNewValue());
+                        BigDecimal price = new BigDecimal(t.getRowValue().getPrice());
+                        BigDecimal withNoTax = amount.multiply(price);
+                        BigDecimal withTax = withNoTax.add(withNoTax.multiply(new BigDecimal("0.2")));
+
+                        t.getRowValue().setNoTax(withNoTax.toString());
+                        t.getRowValue().setTax(withTax.toString());
+                    }
+                };
+
+        amount.setOnEditCommit(eh);
+
+        addToTableB.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
-            public void handle(TableColumn.CellEditEvent<IncomeTable, String> t) {
-                BigDecimal amount = new BigDecimal(t.getNewValue());
-                BigDecimal price = new BigDecimal(t.getRowValue().getPrice());
-                BigDecimal withTax = amount.multiply(price);
-                BigDecimal withNoTax = withTax.multiply(new BigDecimal("0.2"));
+            public void handle(MouseEvent mouseEvent) {
+                error.setVisible(false);
+                if(categoryIt.getValue() == null || nameIt.getText() == null
+                     || unitIt.getValue()== null || depIt.getValue() == null
+                     || amountIt.getText() == null || priceIt.getText() == null){
+                    error.setVisible(true);
+                    return;
+                }
 
-                t.getRowValue().setNoTax(withTax.toString());
-                t.getRowValue().setTax(withNoTax.toString());
+                IncomeTable val = new IncomeTable(categoryIt.getValue().getName(),
+                        nameIt.getText(), unitIt.getValue().getName(), depIt.getValue().getName(),
+                        amountIt.getText(), priceIt.getText()
+                );
+
+                if(incomeTable.getItems() == null) {
+                    incomeTable.setItems(FXCollections.<IncomeTable>observableArrayList());
+                }
+
+                BigDecimal amount = new BigDecimal(val.getAmount());
+                BigDecimal price = new BigDecimal(val.getPrice());
+                BigDecimal withNoTax = amount.multiply(price);
+                BigDecimal withTax = withNoTax.add(withNoTax.multiply(new BigDecimal("0.2")));
+
+                val.setNoTax(withNoTax.toString());
+                val.setTax(withTax.toString());
+
+                incomeTable.getItems().addAll(val);
             }
         });
 
         incomeTable.setItems(data);
     }
-
 
 }

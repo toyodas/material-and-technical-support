@@ -3,15 +3,15 @@ package com.kiev.msupport.controller.view.income;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleStringProperty;
 
-public class UnitCombo {
+public class ComboItem {
     private SimpleLongProperty id = new SimpleLongProperty();
     private SimpleStringProperty name = new SimpleStringProperty();
 
-    public UnitCombo(String name) {
+    public ComboItem(String name) {
         this.name = new SimpleStringProperty(name);
     }
 
-    public UnitCombo(Long id, String name) {
+    public ComboItem(Long id, String name) {
         this.id = new SimpleLongProperty(id);
         this.name = new SimpleStringProperty(name);
     }

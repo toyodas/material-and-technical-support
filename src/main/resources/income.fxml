@@ -6,7 +6,7 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.kiev.msupport.controller.view.income.IncomeTableController">
    <children>
-      <SplitPane dividerPositions="0.8266331658291457" orientation="VERTICAL" prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <SplitPane dividerPositions="0.6984924623115578" orientation="VERTICAL" prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <items>
             <TableView fx:id="incomeTable" prefHeight="400.0" prefWidth="600.0">
               <columns>
@@ -21,14 +21,15 @@
             </TableView>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
                <children>
-                  <ComboBox fx:id="categoryIt" layoutY="2.0" prefHeight="25.0" prefWidth="92.0" promptText="Категория" />
-                  <TextField fx:id="nameIt" layoutX="101.0" layoutY="2.0" promptText="Наименование" />
-                  <ComboBox fx:id="unitIt" layoutX="281.0" layoutY="2.0" prefHeight="25.0" prefWidth="107.0" promptText="Ед. Изм" />
-                  <TextField fx:id="amountIt" layoutX="402.0" layoutY="2.0" prefHeight="25.0" prefWidth="63.0" promptText="К-во" />
-                  <TextField fx:id="priceIt" layoutX="475.0" layoutY="2.0" prefHeight="25.0" prefWidth="165.0" promptText="Цена за ед. без НДС" />
-                  <Button fx:id="addToDBB" layoutX="402.0" layoutY="33.0" mnemonicParsing="false" text="Сохранить все в базу" />
-                  <Button fx:id="addToTableB" layoutX="4.0" layoutY="33.0" mnemonicParsing="false" text="Добавить в таблицу" />
-                  <Button fx:id="importFromFileB" layoutX="177.0" layoutY="33.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="209.0" text="Импортировать из файла" />
+                  <ComboBox fx:id="categoryIt" layoutX="13.0" layoutY="2.0" prefHeight="25.0" prefWidth="165.0" promptText="Категория" />
+                  <TextField fx:id="nameIt" layoutX="187.0" layoutY="2.0" promptText="Наименование" />
+                  <ComboBox fx:id="unitIt" layoutX="363.0" layoutY="2.0" prefHeight="25.0" prefWidth="107.0" promptText="Ед. Изм" />
+                  <ComboBox fx:id="depIt" layoutX="477.0" layoutY="2.0" prefHeight="25.0" prefWidth="107.0" promptText="Склад" />
+                  <TextField fx:id="amountIt" layoutX="14.0" layoutY="34.0" prefHeight="25.0" prefWidth="165.0" promptText="Количество" />
+                  <TextField fx:id="priceIt" layoutX="190.0" layoutY="34.0" prefHeight="25.0" prefWidth="165.0" promptText="Цена за ед. без НДС" />
+                  <Button fx:id="addToDBB" layoutX="14.0" layoutY="77.0" mnemonicParsing="false" text="Сохранить все в базу" />
+                  <Button fx:id="addToTableB" layoutX="364.0" layoutY="34.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="221.0" text="Добавить в таблицу" />
+                  <Label fx:id="error" layoutX="364.0" layoutY="70.0" text="Все поля обязательны для заполния!" textFill="RED" visible="false" />
                </children>
             </AnchorPane>
         </items>
