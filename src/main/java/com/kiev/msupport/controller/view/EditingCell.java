@@ -1,4 +1,4 @@
-package com.kiev.msupport.controller;
+package com.kiev.msupport.controller.view;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;

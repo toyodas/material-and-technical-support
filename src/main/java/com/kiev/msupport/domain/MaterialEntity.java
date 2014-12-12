@@ -10,40 +10,66 @@ public class MaterialEntity {
     @Column(name = "`id`")
     private Long id;
 
-    @Column(name = "`name`")
-    private String name;
+    @ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name="`mtr_id`", referencedColumnName = "`id`")
+    private MTREntity mtr;
 
-    @Column(name = "`available`")
-    private Long available;
 
-    @Column(name = "`needed`")
-    private Long needed;
+    @ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name="`dep_id`", referencedColumnName = "`id`")
+    private DepartmentEntity department;
+
+    @Column(name = "`t_residue`")
+    private String residueForToday;
+
+    @Column(name = "`p_residue`")
+    private String residueForPeriod;
+
+    @Column(name = "`fprice`")
+    private String fullPrice;
+
+    @Column(name = "`demand`")
+    private String demand;
+
+    @Column(name = "`m_income`")
+    private String monthIncome;
 
     @Column(name = "`last_updated`")
     private String lastUpdated;
 
-    @Column(name = "`desc`")
-    private String description;
 
-    @Column(name = "`comment`")
-    private String comment;
 
-    public MaterialEntity(String name, Long available, Long needed, String lastUpdated, String description) {
-        this.name = name;
-        this.available = available;
-        this.needed = needed;
-        this.lastUpdated = lastUpdated;
-        this.description = description;
-        this.comment = null;
+    public MaterialEntity(Long id, MTREntity mtr, DepartmentEntity department, String residueForToday, String residueForPeriod, String fullPrice, String demand, String monthIncome) {
+        this.id = id;
+        this.mtr = mtr;
+        this.department = department;
+        this.residueForToday = residueForToday;
+        this.residueForPeriod = residueForPeriod;
+        this.fullPrice = fullPrice;
+        this.demand = demand;
+        this.monthIncome = monthIncome;
     }
 
-    public MaterialEntity(String name, Long available, Long needed, String lastUpdated, String description, String comments) {
-        this.name = name;
-        this.available = available;
-        this.needed = needed;
+    public MaterialEntity(MTREntity mtr, DepartmentEntity department, String residueForToday, String residueForPeriod, String fullPrice, String demand, String monthIncome) {
+        this.mtr = mtr;
+        this.department = department;
+        this.residueForToday = residueForToday;
+        this.residueForPeriod = residueForPeriod;
+        this.fullPrice = fullPrice;
+        this.demand = demand;
+        this.monthIncome = monthIncome;
+    }
+
+    public MaterialEntity(Long id, MTREntity mtr, DepartmentEntity department, String residueForToday, String residueForPeriod, String fullPrice, String demand, String monthIncome, String lastUpdated) {
+        this.id = id;
+        this.mtr = mtr;
+        this.department = department;
+        this.residueForToday = residueForToday;
+        this.residueForPeriod = residueForPeriod;
+        this.fullPrice = fullPrice;
+        this.demand = demand;
+        this.monthIncome = monthIncome;
         this.lastUpdated = lastUpdated;
-        this.description = description;
-        this.comment = comments;
     }
 
     public Long getId() {
@@ -54,28 +80,60 @@ public class MaterialEntity {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public MTREntity getMtr() {
+        return mtr;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setMtr(MTREntity mtr) {
+        this.mtr = mtr;
     }
 
-    public Long getAvailable() {
-        return available;
+    public DepartmentEntity getDepartment() {
+        return department;
     }
 
-    public void setAvailable(Long available) {
-        this.available = available;
+    public void setDepartment(DepartmentEntity department) {
+        this.department = department;
     }
 
-    public Long getNeeded() {
-        return needed;
+    public String getResidueForToday() {
+        return residueForToday;
     }
 
-    public void setNeeded(Long needed) {
-        this.needed = needed;
+    public void setResidueForToday(String residueForToday) {
+        this.residueForToday = residueForToday;
+    }
+
+    public String getResidueForPeriod() {
+        return residueForPeriod;
+    }
+
+    public void setResidueForPeriod(String residueForPeriod) {
+        this.residueForPeriod = residueForPeriod;
+    }
+
+    public String getFullPrice() {
+        return fullPrice;
+    }
+
+    public void setFullPrice(String fullPrice) {
+        this.fullPrice = fullPrice;
+    }
+
+    public String getDemand() {
+        return demand;
+    }
+
+    public void setDemand(String demand) {
+        this.demand = demand;
+    }
+
+    public String getMonthIncome() {
+        return monthIncome;
+    }
+
+    public void setMonthIncome(String monthIncome) {
+        this.monthIncome = monthIncome;
     }
 
     public String getLastUpdated() {
@@ -84,21 +142,5 @@ public class MaterialEntity {
 
     public void setLastUpdated(String lastUpdated) {
         this.lastUpdated = lastUpdated;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getComment() {
-        return comment;
-    }
-
-    public void setComment(String comment) {
-        this.comment = comment;
     }
 }

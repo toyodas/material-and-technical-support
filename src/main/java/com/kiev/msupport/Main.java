@@ -15,7 +15,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        AnchorPane page = (AnchorPane)FXMLLoader.load(getClass().getClassLoader().getResource("msupport.fxml"));
+        AnchorPane page = (AnchorPane)FXMLLoader.load(this.getClass().getClassLoader().getResource("tabs.fxml"));
         Scene scene = new Scene(page);
         //maximized window
         Screen screen = Screen.getPrimary();
