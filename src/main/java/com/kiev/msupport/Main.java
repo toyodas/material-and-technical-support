@@ -1,5 +1,6 @@
 package com.kiev.msupport;
 
+import com.kiev.msupport.controller.db.MaterialsMngrBean;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
@@ -13,8 +14,11 @@ public class Main extends Application {
         launch(args);
     }
 
+    public static MaterialsMngrBean db = new MaterialsMngrBean();
     @Override
     public void start(Stage stage) throws Exception {
+        db.bootstrap();
+
         AnchorPane page = (AnchorPane)FXMLLoader.load(this.getClass().getClassLoader().getResource("tabs.fxml"));
         Scene scene = new Scene(page);
         //maximized window

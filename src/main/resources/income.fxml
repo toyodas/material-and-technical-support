@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.kiev.msupport.controller.view.income.IncomeTableController">
+   <children>
+      <SplitPane dividerPositions="0.8266331658291457" orientation="VERTICAL" prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <items>
+            <TableView fx:id="incomeTable" prefHeight="400.0" prefWidth="600.0">
+              <columns>
+                  <TableColumn fx:id="category" prefWidth="75.0" text="Категория" />
+                  <TableColumn fx:id="name" prefWidth="75.0" text="Наименование" />
+                  <TableColumn fx:id="units" prefWidth="75.0" text="Единицы измерения" />
+                  <TableColumn fx:id="amount" prefWidth="75.0" text="Количество" />
+                  <TableColumn fx:id="price" prefWidth="75.0" text="Цена за ед. без НДС" />
+                  <TableColumn fx:id="noTaxPrice" prefWidth="75.0" text="Общая сумма без НДС" />
+                  <TableColumn fx:id="taxPrice" prefWidth="75.0" text="Общая сумма с НДС" />
+              </columns>
+            </TableView>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+               <children>
+                  <ComboBox fx:id="categoryIt" layoutY="2.0" prefHeight="25.0" prefWidth="92.0" promptText="Категория" />
+                  <TextField fx:id="nameIt" layoutX="101.0" layoutY="2.0" promptText="Наименование" />
+                  <ComboBox fx:id="unitIt" layoutX="281.0" layoutY="2.0" prefHeight="25.0" prefWidth="107.0" promptText="Ед. Изм" />
+                  <TextField fx:id="amountIt" layoutX="402.0" layoutY="2.0" prefHeight="25.0" prefWidth="63.0" promptText="К-во" />
+                  <TextField fx:id="priceIt" layoutX="475.0" layoutY="2.0" prefHeight="25.0" prefWidth="165.0" promptText="Цена за ед. без НДС" />
+                  <Button fx:id="addToDBB" layoutX="402.0" layoutY="33.0" mnemonicParsing="false" text="Сохранить все в базу" />
+                  <Button fx:id="addToTableB" layoutX="4.0" layoutY="33.0" mnemonicParsing="false" text="Добавить в таблицу" />
+                  <Button fx:id="importFromFileB" layoutX="177.0" layoutY="33.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="209.0" text="Импортировать из файла" />
+               </children>
+            </AnchorPane>
+        </items>
+      </SplitPane>
+   </children>
+</AnchorPane>

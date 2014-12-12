@@ -1,5 +1,6 @@
-package com.kiev.msupport.controller.view;
+package com.kiev.msupport.controller.utils;
 
+import com.kiev.msupport.controller.view.report.MaterialsTable;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
@@ -8,7 +9,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
-public class EditingCell extends TableCell<MaterialsTable, String> {
+public class EditingCell<T>  extends TableCell<T, String> {
 
     private TextField textField;
 

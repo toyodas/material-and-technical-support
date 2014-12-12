@@ -3,7 +3,7 @@ package com.kiev.msupport.domain;
 import javax.persistence.*;
 
 @Entity
-@Table(name="mcatagory")
+@Table(name="mcategory")
 public class CategoryEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.AUTO)

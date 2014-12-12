@@ -11,6 +11,8 @@ import java.util.List;
 public class MaterialsMngrBean {
     EntityManagerFactory emf = Persistence.createEntityManagerFactory("materials");
     EntityManager em = emf.createEntityManager();
+    CriteriaBuilder builder = em.getCriteriaBuilder();
+
 
     public void bootstrap(){
         CategoryEntity categoryEntity = new CategoryEntity("Огнеупоры");
@@ -36,15 +38,24 @@ public class MaterialsMngrBean {
 
     }
 
-    public List<MaterialEntity> findOffset(int from, int pageSize) {
-        CriteriaBuilder builder = em.getCriteriaBuilder();
-        CriteriaQuery<MaterialEntity> cQuery = builder.createQuery(MaterialEntity.class);
-        Root<MaterialEntity> start = cQuery.from(MaterialEntity.class);
-        CriteriaQuery<MaterialEntity> select = cQuery.select(start);
+    public <T> List<T> findOffset(int from, int pageSize, Class clazz) {
+        CriteriaQuery<T> cQuery = builder.createQuery(clazz);
+        Root<T> start = cQuery.from(clazz);
+        CriteriaQuery<T> select = cQuery.select(start);
 
         TypedQuery typedQuery = em.createQuery(select);
         typedQuery.setFirstResult(from);
         typedQuery.setMaxResults(pageSize);
+        return typedQuery.getResultList();
+    }
+
+
+    public <T> List<T> findAll(Class clazz) {
+        CriteriaQuery<T> cQuery = builder.createQuery(clazz);
+        Root<T> start = cQuery.from(clazz);
+        CriteriaQuery<T> select = cQuery.select(start);
+
+        TypedQuery typedQuery = em.createQuery(select);
         return typedQuery.getResultList();
     }
 

@@ -1,10 +1,10 @@
-package com.kiev.msupport.controller.view;
+package com.kiev.msupport.controller.view.report;
 
+import com.kiev.msupport.Main;
 import com.kiev.msupport.controller.db.MaterialsMngrBean;
 import com.kiev.msupport.domain.MaterialEntity;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
@@ -12,7 +12,6 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.TextAlignment;
-import javafx.util.Callback;
 
 import java.net.URL;
 import java.util.*;
@@ -44,17 +43,15 @@ public class MaterialsTableController implements Initializable {
 
 
     private Map<Long, MaterialEntity> entities;
-    private Map<Long, MaterialDetail> details;
-    MaterialsMngrBean db = new MaterialsMngrBean();
+    MaterialsMngrBean db = Main.db;
 
     ObservableList<MaterialsTable> data = FXCollections.observableArrayList();
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        db.bootstrap();
 
         List<MaterialsTable> tableData = new ArrayList<MaterialsTable>();
-        List<MaterialEntity> list = db.findOffset(0, 20);
+        List<MaterialEntity> list = db.findOffset(0, 20, MaterialEntity.class);
 
         entities = new HashMap<Long, MaterialEntity>();
 //

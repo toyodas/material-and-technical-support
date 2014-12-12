@@ -1,4 +1,4 @@
-package com.kiev.msupport.controller.view;
+package com.kiev.msupport.controller.view.report;
 
 import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleStringProperty;
