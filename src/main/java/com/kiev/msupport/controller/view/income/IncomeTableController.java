@@ -4,9 +4,7 @@ import com.kiev.msupport.Main;
 import com.kiev.msupport.controller.db.MaterialsMngrBean;
 import com.kiev.msupport.controller.utils.EditingCell;
 import com.kiev.msupport.controller.utils.Tables;
-import com.kiev.msupport.domain.CategoryEntity;
-import com.kiev.msupport.domain.DepartmentEntity;
-import com.kiev.msupport.domain.UnitEntity;
+import com.kiev.msupport.domain.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -14,6 +12,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.event.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.util.Callback;
 
@@ -57,7 +56,10 @@ public class IncomeTableController implements Initializable {
     private Label error;
     @FXML
     private Button addToDBB;
-
+    @FXML
+    private ListView<String> presentNames;
+    @FXML
+    private Tooltip tooltip;
 
     MaterialsMngrBean db = Main.db;
 
@@ -137,7 +139,7 @@ public class IncomeTableController implements Initializable {
 
         price.setOnEditCommit(eh1);
 
-        EventHandler<TableColumn.CellEditEvent<IncomeTable, String>> eh =
+        EventHandler<TableColumn.CellEditEvent<IncomeTable, String>> eh2 =
                 new EventHandler<TableColumn.CellEditEvent<IncomeTable, String>>() {
                     @Override
                     public void handle(TableColumn.CellEditEvent<IncomeTable, String> t) {
@@ -151,15 +153,15 @@ public class IncomeTableController implements Initializable {
                     }
                 };
 
-        amount.setOnEditCommit(eh);
+        amount.setOnEditCommit(eh2);
 
         addToTableB.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
                 error.setVisible(false);
-                if(categoryIt.getValue() == null || nameIt.getText() == null
-                     || unitIt.getValue()== null || depIt.getValue() == null
-                     || amountIt.getText() == null || priceIt.getText() == null){
+                if (categoryIt.getValue() == null || nameIt.getText() == null
+                        || unitIt.getValue() == null || depIt.getValue() == null
+                        || amountIt.getText() == null || priceIt.getText() == null) {
                     error.setVisible(true);
                     return;
                 }
@@ -169,7 +171,11 @@ public class IncomeTableController implements Initializable {
                         amountIt.getText(), priceIt.getText()
                 );
 
-                if(incomeTable.getItems() == null) {
+                val.setCategoryId(categoryIt.getValue().getId());
+                val.setUnitsId(unitIt.getValue().getId());
+                val.setDepId(depIt.getValue().getId());
+
+                if (incomeTable.getItems() == null) {
                     incomeTable.setItems(FXCollections.<IncomeTable>observableArrayList());
                 }
 
@@ -182,6 +188,29 @@ public class IncomeTableController implements Initializable {
                 val.setTax(withTax.toString());
 
                 incomeTable.getItems().addAll(val);
+            }
+        });
+
+        addToDBB.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                List<IncomeTable> tableData = incomeTable.getItems();
+                for(IncomeTable t:tableData){
+
+                    CategoryEntity category = db.getEntity(CategoryEntity.class, t.getCategoryId());
+                    UnitEntity units = db.getEntity(UnitEntity.class, t.getUnitsId());
+                    DepartmentEntity dep = db.getEntity(DepartmentEntity.class, t.getDepId());
+
+                    MTREntity mtr = db.getMTR(t.getCategoryId(), t.getUnitsId(), t.getName());
+                    if(mtr == null){
+                        mtr = db.updateEntity(new MTREntity(category, t.getName(), units));
+                    }
+
+                    IncomeEntity en = new IncomeEntity(mtr, t.getAmount(), t.getPrice(), dep, new Date().toString(), db.manager);
+                    db.updateEntity(en);
+                }
+
+                incomeTable.setItems(FXCollections.observableArrayList(new ArrayList<IncomeTable>()));
             }
         });
 

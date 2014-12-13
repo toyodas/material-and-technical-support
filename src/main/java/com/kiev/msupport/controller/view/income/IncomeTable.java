@@ -1,5 +1,8 @@
 package com.kiev.msupport.controller.view.income;
 
+import com.kiev.msupport.domain.CategoryEntity;
+import com.kiev.msupport.domain.DepartmentEntity;
+import com.kiev.msupport.domain.UnitEntity;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleStringProperty;
 
@@ -14,6 +17,34 @@ public class IncomeTable {
     public SimpleStringProperty noTax = new SimpleStringProperty();
     public SimpleStringProperty tax = new SimpleStringProperty();
 
+    private Long categoryId;
+    private Long unitsId;
+    private Long depId;
+
+    public Long getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(Long categoryId) {
+        this.categoryId = categoryId;
+    }
+
+    public Long getUnitsId() {
+        return unitsId;
+    }
+
+    public void setUnitsId(Long unitsId) {
+        this.unitsId = unitsId;
+    }
+
+    public Long getDepId() {
+        return depId;
+    }
+
+    public void setDepId(Long depId) {
+        this.depId = depId;
+    }
+
     public IncomeTable( String category, String name, String units, String dep, String amount, String price) {
         this.category = new SimpleStringProperty(category);
         this.name = new SimpleStringProperty(name);
@@ -22,6 +53,19 @@ public class IncomeTable {
         this.amount = new SimpleStringProperty(amount);
         this.price = new SimpleStringProperty(price);
     }
+
+    public IncomeTable( CategoryEntity category, String name, UnitEntity units, DepartmentEntity dep, String amount, String price) {
+        this.categoryId = category.getId();
+        this.category = new SimpleStringProperty(category.getName());
+        this.name = new SimpleStringProperty(name);
+        this.units = new SimpleStringProperty(units.getName());
+        this.unitsId = units.getId();
+        this.dep = new SimpleStringProperty(dep.getName());
+        this.depId = dep.getId();
+        this.amount = new SimpleStringProperty(amount);
+        this.price = new SimpleStringProperty(price);
+    }
+
 
     public long getId() {
         return id.get();

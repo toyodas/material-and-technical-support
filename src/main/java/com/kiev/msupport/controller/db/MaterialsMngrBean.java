@@ -11,31 +11,28 @@ import java.util.List;
 public class MaterialsMngrBean {
     EntityManagerFactory emf = Persistence.createEntityManagerFactory("materials");
     EntityManager em = emf.createEntityManager();
+
     CriteriaBuilder builder = em.getCriteriaBuilder();
 
+    public Manager manager;
 
     public void bootstrap(){
-        CategoryEntity categoryEntity = new CategoryEntity("Огнеупоры");
-        UnitEntity unitEntity = new UnitEntity("тонны");
-        DepartmentEntity depEntity = new DepartmentEntity("пост1");
-        Manager manager = new Manager("Oleg Pigolenko");
+        manager = new Manager("Oleg Pigolenko");
 
-        categoryEntity = updateEntity(categoryEntity);
-        unitEntity = updateEntity(unitEntity);
-        depEntity = updateEntity(depEntity);
+        updateEntity(new CategoryEntity("Огнеупоры"));
+        updateEntity(new CategoryEntity("Тара"));
+
+        updateEntity(new UnitEntity("тн"));
+        updateEntity(new UnitEntity("шт"));
+        updateEntity(new UnitEntity("кг"));
+
+        updateEntity(new DepartmentEntity("рмц№14"));
+        updateEntity(new DepartmentEntity("склад №1"));
+        updateEntity(new DepartmentEntity("склад №2"));
+        updateEntity(new DepartmentEntity("цех №7"));
+        updateEntity(new DepartmentEntity("цех №3"));
+
         manager = updateEntity(manager);
-
-        MTREntity mtr = new MTREntity(categoryEntity, "кирпич", unitEntity);
-        mtr = updateEntity(mtr);
-
-        ExpenseEntity expense = new ExpenseEntity(mtr, "0.24", depEntity, Long.toString(System.currentTimeMillis()), manager);
-        IncomeEntity  incomeEntity = new IncomeEntity(mtr, "2.4", "22.5", depEntity, Long.toString(System.currentTimeMillis()), manager);
-        RequestEntity request = new RequestEntity(mtr, "2.0", depEntity, Long.toString(System.currentTimeMillis()), manager);
-
-        updateEntity(expense);
-        updateEntity(incomeEntity);
-        updateEntity(request);
-
     }
 
     public <T> List<T> findOffset(int from, int pageSize, Class clazz) {
@@ -49,7 +46,6 @@ public class MaterialsMngrBean {
         return typedQuery.getResultList();
     }
 
-
     public <T> List<T> findAll(Class clazz) {
         CriteriaQuery<T> cQuery = builder.createQuery(clazz);
         Root<T> start = cQuery.from(clazz);
@@ -59,6 +55,28 @@ public class MaterialsMngrBean {
         return typedQuery.getResultList();
     }
 
+    public <T> T getById(Class clazz, Long id){
+        return (T)em.find(clazz, id);
+    }
+
+    public MTREntity getMTR(Long categoryId, Long unitsId, String name){
+        Query q = em.createQuery("select e from MTREntity e where cat_id=:cId and " +
+                "unit_id=:uId and name = :name", MTREntity.class);
+        q.setParameter("cId", categoryId);
+        q.setParameter("name", name);
+        q.setParameter("uId", unitsId);
+        try {
+            return (MTREntity)q.getSingleResult();
+        } catch (NoResultException e){
+            return null;
+        }
+    }
+
+
+    public <T> T getEntity(Class<T> clazz, Long id){
+        return em.find(clazz, id);
+    }
+
     public <T> T updateEntity(T e){
         EntityTransaction et = em.getTransaction();
         et.begin();
@@ -66,4 +84,5 @@ public class MaterialsMngrBean {
         et.commit();
         return upd;
     }
+
 }
