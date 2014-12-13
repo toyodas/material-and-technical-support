@@ -28,12 +28,20 @@
           </Tab>
             <Tab text="Расход">
               <content>
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                      <children>
+                          <fx:include source="expense.fxml" />
+                      </children>
+                  </AnchorPane>
               </content>
             </Tab>
             <Tab text="Запрос">
               <content>
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                      <children>
+                          <fx:include source="request.fxml" />
+                      </children>
+                  </AnchorPane>
               </content>
             </Tab>
             <Tab text="Анализ">
