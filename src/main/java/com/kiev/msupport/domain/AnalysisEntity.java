@@ -1,35 +1,49 @@
 package com.kiev.msupport.domain;
 
+import org.hibernate.annotations.Type;
+
 import javax.persistence.*;
-import java.sql.Blob;
 import java.util.Date;
-import java.util.Locale;
 
 @Entity
-@Table(name="analysis")
+@Table(name = "analysis")
 public class AnalysisEntity {
-    @Id @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name="`id`")
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "`id`")
     private Long id;
 
-    @Column(name="`date`")
+    @Column(name = "`date`")
     private Date date;
 
-    @JoinColumn(name="`manager_id`", referencedColumnName = "`id`")
+    @ManyToOne
+    @JoinColumn(name = "`manager_id`", referencedColumnName = "`id`")
     private Manager manager;
 
     @Lob
-    @Column(name="`screenshot`")
-    private Blob screenShot;
+    @Basic(fetch = FetchType.LAZY)
+    @Type(type="org.hibernate.type.PrimitiveByteArrayBlobType")
+    @Column(name = "`screenshot`", length = 100000)
+    private byte[] screenShot;
 
 
-    @JoinColumn(name="`cat_id`", referencedColumnName = "`id`")
+    @ManyToOne
+    @JoinColumn(name = "`cat_id`", referencedColumnName = "`id`")
     private CategoryEntity category;
 
-    @Column(name="`price`")
+    @Column(name = "`price`")
     private String fullPrice;
 
-    public AnalysisEntity(Date date, Manager manager, Blob screenShot, CategoryEntity category, String fullPrice) {
+    public AnalysisEntity() {
+    }
+
+    public AnalysisEntity(Date date, Manager manager, byte[] screenShot) {
+        this.date = date;
+        this.manager = manager;
+        this.screenShot = screenShot;
+    }
+
+    public AnalysisEntity(Date date, Manager manager, byte[] screenShot, CategoryEntity category, String fullPrice) {
         this.date = date;
         this.manager = manager;
         this.screenShot = screenShot;
@@ -37,17 +51,13 @@ public class AnalysisEntity {
         this.fullPrice = fullPrice;
     }
 
-    public AnalysisEntity(Long id, Date date, Manager manager, Blob screenShot, CategoryEntity category, String fullPrice) {
+    public AnalysisEntity(Long id, Date date, Manager manager, byte[] screenShot, CategoryEntity category, String fullPrice) {
         this.id = id;
         this.date = date;
         this.manager = manager;
         this.screenShot = screenShot;
         this.category = category;
         this.fullPrice = fullPrice;
-    }
-
-    public Long getId() {
-        return id;
     }
 
     public void setId(Long id) {
@@ -70,11 +80,16 @@ public class AnalysisEntity {
         this.manager = manager;
     }
 
-    public Blob getScreenShot() {
+
+    public Long getId() {
+        return id;
+    }
+
+    public byte[] getScreenShot() {
         return screenShot;
     }
 
-    public void setScreenShot(Blob screenShot) {
+    public void setScreenShot(byte[] screenShot) {
         this.screenShot = screenShot;
     }
 
