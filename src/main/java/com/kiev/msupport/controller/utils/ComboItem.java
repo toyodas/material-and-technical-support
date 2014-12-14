@@ -1,4 +1,4 @@
-package com.kiev.msupport.controller.view.expense;
+package com.kiev.msupport.controller.utils;
 
 import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleStringProperty;

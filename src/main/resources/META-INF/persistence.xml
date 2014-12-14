@@ -25,7 +25,7 @@
             <property name="hibernate.show_sql" value="true" />
 
             <!--uncomment in case you want to clear db-->
-            <property name="hibernate.hbm2ddl.auto" value="create" />
+            <!--<property name="hibernate.hbm2ddl.auto" value="create" />-->
         </properties>
 
     </persistence-unit>

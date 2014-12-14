@@ -15,7 +15,7 @@ public class Tables {
         label.setAlignment(Pos.CENTER);
         label.setTextAlignment(TextAlignment.CENTER);
 
-        col.setPrefWidth(100);
+        col.setPrefWidth(200);
         StackPane stack = new StackPane();
         stack.getChildren().add(label);
         stack.prefWidthProperty().bind(col.widthProperty().subtract(5));

@@ -2,6 +2,7 @@ package com.kiev.msupport.controller.view.expense;
 
 import com.kiev.msupport.Main;
 import com.kiev.msupport.controller.db.MaterialsMngrBean;
+import com.kiev.msupport.controller.utils.ComboItem;
 import com.kiev.msupport.controller.utils.EditingCell;
 import com.kiev.msupport.controller.utils.Tables;
 import com.kiev.msupport.domain.*;

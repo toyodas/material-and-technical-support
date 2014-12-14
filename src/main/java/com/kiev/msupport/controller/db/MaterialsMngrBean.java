@@ -6,6 +6,7 @@ import com.kiev.msupport.domain.*;
 import javax.persistence.*;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Root;
 import java.math.BigDecimal;
 import java.util.*;
@@ -128,7 +129,6 @@ public class MaterialsMngrBean {
         return bd;
     }
 
-
     private BigDecimal incomePriceSum(List<IncomeEntity> list) {
         BigDecimal bd = new BigDecimal(0);
 
@@ -242,6 +242,33 @@ public class MaterialsMngrBean {
 
     public <T> T getEntity(Class<T> clazz, Long id) {
         return em.find(clazz, id);
+    }
+
+
+    public CategoryEntity categoryIfNotExist(String name){
+        CategoryEntity r = getByName(CategoryEntity.class, name);
+        if(r == null){
+            r = updateEntity(new CategoryEntity(name));
+        }
+        return r;
+    }
+
+    public <T> T getByName(Class<T> clazz, String name) {
+
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<T> q = cb.createQuery(clazz);
+        Root<T> c = q.from(clazz);
+        q.select(c).where(cb.equal(c.get("name"), name));
+
+        TypedQuery<T> tquery = em.createQuery(q);
+
+        T result = null;
+        try{
+            tquery.getSingleResult();
+        } catch(NoResultException e){
+            e.printStackTrace();
+        }
+        return result;
     }
 
     public <T> T updateEntity(T e) {
