@@ -4,7 +4,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "material")
-public class MaterialEntity {
+public class ReportEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "`id`")
@@ -39,7 +39,7 @@ public class MaterialEntity {
 
 
 
-    public MaterialEntity(Long id, MTREntity mtr, DepartmentEntity department, String residueForToday, String residueForPeriod, String fullPrice, String demand, String monthIncome) {
+    public ReportEntity(Long id, MTREntity mtr, DepartmentEntity department, String residueForToday, String residueForPeriod, String fullPrice, String demand, String monthIncome) {
         this.id = id;
         this.mtr = mtr;
         this.department = department;
@@ -50,7 +50,7 @@ public class MaterialEntity {
         this.monthIncome = monthIncome;
     }
 
-    public MaterialEntity(MTREntity mtr, DepartmentEntity department, String residueForToday, String residueForPeriod, String fullPrice, String demand, String monthIncome) {
+    public ReportEntity(MTREntity mtr, DepartmentEntity department, String residueForToday, String residueForPeriod, String fullPrice, String demand, String monthIncome) {
         this.mtr = mtr;
         this.department = department;
         this.residueForToday = residueForToday;
@@ -60,7 +60,7 @@ public class MaterialEntity {
         this.monthIncome = monthIncome;
     }
 
-    public MaterialEntity(Long id, MTREntity mtr, DepartmentEntity department, String residueForToday, String residueForPeriod, String fullPrice, String demand, String monthIncome, String lastUpdated) {
+    public ReportEntity(Long id, MTREntity mtr, DepartmentEntity department, String residueForToday, String residueForPeriod, String fullPrice, String demand, String monthIncome, String lastUpdated) {
         this.id = id;
         this.mtr = mtr;
         this.department = department;

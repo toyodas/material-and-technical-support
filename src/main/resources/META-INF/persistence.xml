@@ -7,9 +7,15 @@
 
     <persistence-unit name="materials" transaction-type="RESOURCE_LOCAL">
         <provider>org.hibernate.ejb.HibernatePersistence</provider>
-        <class>com.kiev.msupport.domain.MaterialEntity</class>
+        <class>com.kiev.msupport.domain.ReportEntity</class>
+
+
 
         <properties>
+            <property name="hibernate.connection.charSet" value="UTF-8"/>
+            <property name="hibernate.connection.characterEncoding" value="UTF-8"></property>
+            <property name="hibernate.connection.useUnicode" value="true"></property>
+
             <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver" />
             <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/msupport" />
             <property name="javax.persistence.jdbc.user" value="oleg" />
@@ -17,7 +23,9 @@
 
             <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect" />
             <property name="hibernate.show_sql" value="true" />
-            <property name="hibernate.hbm2ddl.auto" value="create" />
+
+            <!--uncomment in case you want to clear db-->
+            <!--<property name="hibernate.hbm2ddl.auto" value="create" />-->
         </properties>
 
     </persistence-unit>

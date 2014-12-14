@@ -12,9 +12,9 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.event.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.util.Callback;
+import org.hibernate.annotations.SourceType;
 
 import java.math.BigDecimal;
 import java.net.URL;
@@ -83,7 +83,6 @@ public class IncomeTableController implements Initializable {
 
         unitIt.setItems(FXCollections.observableArrayList(unitCombos));
 
-
         List<DepartmentEntity> departmentEntities  = db.findAll(DepartmentEntity.class);
         List<ComboItem> depCombos = new ArrayList<ComboItem>();
         for(DepartmentEntity e:departmentEntities){
@@ -127,10 +126,15 @@ public class IncomeTableController implements Initializable {
         EventHandler<TableColumn.CellEditEvent<IncomeTable, String>> eh1 =  new EventHandler<TableColumn.CellEditEvent<IncomeTable, String>>() {
             @Override
             public void handle(TableColumn.CellEditEvent<IncomeTable, String> t) {
-                BigDecimal amount = new BigDecimal(t.getRowValue().getPrice());
+
+                System.out.println(t.getNewValue());
+                System.out.println(t.getOldValue());
+                System.out.println(t.getRowValue());
+
+                BigDecimal amount = new BigDecimal(t.getRowValue().getAmount());
                 BigDecimal price = new BigDecimal(t.getNewValue());
                 BigDecimal withNoTax = amount.multiply(price);
-                BigDecimal withTax = withNoTax.add(withNoTax.multiply(new BigDecimal("0.2")));
+                BigDecimal withTax = withNoTax.multiply(new BigDecimal("1.2"));
 
                 t.getRowValue().setNoTax(withNoTax.toString());
                 t.getRowValue().setTax(withTax.toString());
@@ -146,7 +150,7 @@ public class IncomeTableController implements Initializable {
                         BigDecimal amount = new BigDecimal(t.getNewValue());
                         BigDecimal price = new BigDecimal(t.getRowValue().getPrice());
                         BigDecimal withNoTax = amount.multiply(price);
-                        BigDecimal withTax = withNoTax.add(withNoTax.multiply(new BigDecimal("0.2")));
+                        BigDecimal withTax = withNoTax.multiply(new BigDecimal("1.2"));
 
                         t.getRowValue().setNoTax(withNoTax.toString());
                         t.getRowValue().setTax(withTax.toString());
@@ -206,7 +210,7 @@ public class IncomeTableController implements Initializable {
                         mtr = db.updateEntity(new MTREntity(category, t.getName(), units));
                     }
 
-                    IncomeEntity en = new IncomeEntity(mtr, t.getAmount(), t.getPrice(), dep, new Date().toString(), db.manager);
+                    IncomeEntity en = new IncomeEntity(mtr, t.getAmount(), t.getPrice(), dep, new Date(), db.manager);
                     db.updateEntity(en);
                 }
 

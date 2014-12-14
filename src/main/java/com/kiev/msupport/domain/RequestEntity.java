@@ -1,6 +1,7 @@
 package com.kiev.msupport.domain;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Entity
 @Table(name="requested")
@@ -21,7 +22,8 @@ public class RequestEntity {
     private DepartmentEntity department;
 
     @Column(name="`date`")
-    private String date;
+    @Temporal(TemporalType.DATE)
+    private Date date;
 
     @ManyToOne
     @JoinColumn(name = "`manager_id`", referencedColumnName = "`id`")
@@ -30,7 +32,7 @@ public class RequestEntity {
     public RequestEntity() {
     }
 
-    public RequestEntity(Long id, MTREntity mtr, String amount, DepartmentEntity department, String date, Manager manager) {
+    public RequestEntity(Long id, MTREntity mtr, String amount, DepartmentEntity department, Date date, Manager manager) {
         this.id = id;
         this.mtr = mtr;
         this.amount = amount;
@@ -39,7 +41,7 @@ public class RequestEntity {
         this.manager = manager;
     }
 
-    public RequestEntity(MTREntity mtr, String amount, DepartmentEntity department, String date, Manager manager) {
+    public RequestEntity(MTREntity mtr, String amount, DepartmentEntity department, Date date, Manager manager) {
         this.mtr = mtr;
         this.amount = amount;
         this.department = department;
@@ -79,11 +81,11 @@ public class RequestEntity {
         this.department = department;
     }
 
-    public String getDate() {
+    public Date getDate() {
         return date;
     }
 
-    public void setDate(String date) {
+    public void setDate(Date date) {
         this.date = date;
     }
 

@@ -32,7 +32,6 @@ public class RequestTableController implements Initializable {
     private TableColumn<RequestTable, String> units;
     @FXML
     private TableColumn<RequestTable, String> amount;
-
     @FXML
     private ComboBox<ComboItem> categoryIt;
     @FXML
@@ -43,7 +42,6 @@ public class RequestTableController implements Initializable {
     private ComboBox<ComboItem> depIt;
     @FXML
     private TextField amountIt;
-
     @FXML
     private Button addToTableB;
     @FXML
@@ -54,6 +52,8 @@ public class RequestTableController implements Initializable {
     private ListView<String> presentNames;
     @FXML
     private Tooltip tooltip;
+    @FXML
+    private Button reimport;
 
     MaterialsMngrBean db = Main.db;
 
@@ -153,7 +153,7 @@ public class RequestTableController implements Initializable {
                         mtr = db.updateEntity(new MTREntity(category, t.getName(), units));
                     }
 
-                    RequestEntity en = new RequestEntity(mtr, t.getAmount(), dep, new Date().toString(), db.manager);
+                    RequestEntity en = new RequestEntity(mtr, t.getAmount(), dep, new Date(), db.manager);
                     db.updateEntity(en);
                 }
 

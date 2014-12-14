@@ -1,6 +1,5 @@
 package com.kiev.msupport.controller.utils;
 
-import com.kiev.msupport.controller.view.report.MaterialsTable;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;

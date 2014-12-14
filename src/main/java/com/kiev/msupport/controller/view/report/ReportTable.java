@@ -3,8 +3,7 @@ package com.kiev.msupport.controller.view.report;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleStringProperty;
 
-public class MaterialsTable {
-    public SimpleLongProperty id = new SimpleLongProperty();
+public class ReportTable {
     public SimpleStringProperty category = new SimpleStringProperty();
     public SimpleStringProperty name = new SimpleStringProperty();
     public SimpleStringProperty units = new SimpleStringProperty();
@@ -15,8 +14,7 @@ public class MaterialsTable {
     public SimpleStringProperty demand = new SimpleStringProperty();
     public SimpleStringProperty monthIncome = new SimpleStringProperty();
 
-    public MaterialsTable(Long id, String category, String name, String units, String dep, String residueForToday, String residueForPeriod, String fullPrice, String demand, String monthIncome) {
-        this.id = new SimpleLongProperty(id);
+    public ReportTable(String category, String name, String units, String dep, String residueForToday, String residueForPeriod, String fullPrice, String demand, String monthIncome) {
         this.category = new SimpleStringProperty(category);
         this.name = new SimpleStringProperty(name);
         this.units = new SimpleStringProperty(units);
@@ -26,18 +24,6 @@ public class MaterialsTable {
         this.fullPrice = new SimpleStringProperty(fullPrice);
         this.demand = new SimpleStringProperty(demand);
         this.monthIncome = new SimpleStringProperty(monthIncome);
-    }
-
-    public long getId() {
-        return id.get();
-    }
-
-    public SimpleLongProperty idProperty() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id.set(id);
     }
 
     public String getCategory() {

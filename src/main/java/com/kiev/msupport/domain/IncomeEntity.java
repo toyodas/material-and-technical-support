@@ -1,6 +1,7 @@
 package com.kiev.msupport.domain;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Entity
 @Table(name="income")
@@ -19,12 +20,13 @@ public class IncomeEntity {
     @Column(name="`no_tax_price`")
     String price;
 
-    @ManyToOne(fetch=FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name="`dep_id`", referencedColumnName = "`id`")
     private DepartmentEntity department;
 
     @Column(name="`date`")
-    private String date;
+    @Temporal(TemporalType.DATE)
+    private Date date;
 
     @ManyToOne
     @JoinColumn(name = "`manager_id`", referencedColumnName = "`id`")
@@ -33,7 +35,11 @@ public class IncomeEntity {
     public IncomeEntity() {
     }
 
-    public IncomeEntity(MTREntity mtr, String amount, String price, DepartmentEntity department, String date, Manager manager) {
+    public IncomeEntity(DepartmentEntity department) {
+        this.department = department;
+    }
+
+    public IncomeEntity(MTREntity mtr, String amount, String price, DepartmentEntity department, Date date, Manager manager) {
         this.mtr = mtr;
         this.amount = amount;
         this.price = price;
@@ -82,11 +88,11 @@ public class IncomeEntity {
         this.department = department;
     }
 
-    public String getDate() {
+    public Date getDate() {
         return date;
     }
 
-    public void setDate(String date) {
+    public void setDate(Date date) {
         this.date = date;
     }
 

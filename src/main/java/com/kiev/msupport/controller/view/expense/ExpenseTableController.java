@@ -153,7 +153,7 @@ public class ExpenseTableController implements Initializable {
                         mtr = db.updateEntity(new MTREntity(category, t.getName(), units));
                     }
 
-                    ExpenseEntity en = new ExpenseEntity(mtr, t.getAmount(), dep, new Date().toString(), db.manager);
+                    ExpenseEntity en = new ExpenseEntity(mtr, t.getAmount(), dep, new Date(), db.manager);
                     db.updateEntity(en);
                 }
 
