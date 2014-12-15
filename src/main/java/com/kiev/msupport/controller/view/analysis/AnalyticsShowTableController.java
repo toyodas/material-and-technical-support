@@ -52,6 +52,8 @@ public class AnalyticsShowTableController implements Initializable {
     private Button showBigImage;
     @FXML
     private Button printButton;
+    @FXML
+    private Button updateData;
 
 
     private MaterialsMngrBean db = Main.db;
@@ -59,22 +61,8 @@ public class AnalyticsShowTableController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        List<AnalysisEntity> offset = db.findOffset(0, 10, AnalysisEntity.class);
-        List<AnalyticsTable> list = new ArrayList<AnalyticsTable>();
-        for (AnalysisEntity e : offset) {
 
-            final ImageView imageview = new ImageView();
-            imageview.setFitHeight(100);
-            imageview.setFitWidth(100);
-            imageview.setImage(new Image(new ByteArrayInputStream(e.getScreenShot())));
-
-            CategoryEntity cat = e.getCategory();
-            Manager m = e.getManager();
-            Date d = e.getDate();
-            list.add(new AnalyticsTable(e.getId(), d == null ? "" : d.toString(), cat == null ? "" : cat.getName(),
-                    e.getFullPrice(), m == null ? "" : m.getFullName(), imageview));
-
-        }
+        List<AnalyticsTable> list = getData(0, 10);
 
         id.setCellValueFactory(new PropertyValueFactory<AnalyticsTable, Long>("id"));
         date.setCellValueFactory(new PropertyValueFactory<AnalyticsTable, String>("date"));
@@ -124,11 +112,39 @@ public class AnalyticsShowTableController implements Initializable {
             }
         });
 
+        updateData.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                data = FXCollections.observableArrayList(getData(0, 10));
+                showTable.setItems(data);
+            }
+        });
+
         showTable.getColumns().get(showTable.getColumns().size() - 1).setPrefWidth(100);
-        data = FXCollections.observableArrayList(list);
+        data = FXCollections.observableArrayList(getData(0, 10));
         showTable.setItems(data);
     }
 
+    private List<AnalyticsTable> getData(int from, int to){
+        List<AnalysisEntity> offset = db.findOffset(from, to, AnalysisEntity.class);
+        List<AnalyticsTable> list = new ArrayList<AnalyticsTable>();
+        for (AnalysisEntity e : offset) {
+
+            final ImageView imageview = new ImageView();
+            imageview.setFitHeight(100);
+            imageview.setFitWidth(100);
+            imageview.setImage(new Image(new ByteArrayInputStream(e.getScreenShot())));
+
+            CategoryEntity cat = e.getCategory();
+            Manager m = e.getManager();
+            Date d = e.getDate();
+            list.add(new AnalyticsTable(e.getId(), d == null ? "" : d.toString(), cat == null ? "" : cat.getName(),
+                    e.getFullPrice(), m == null ? "" : m.getFullName(), imageview));
+
+        }
+
+        return list;
+    }
 
     private void print(final ImageView imageView) {
         PrinterJob printJob = PrinterJob.getPrinterJob();
