@@ -126,11 +126,6 @@ public class IncomeTableController implements Initializable {
         EventHandler<TableColumn.CellEditEvent<IncomeTable, String>> eh1 =  new EventHandler<TableColumn.CellEditEvent<IncomeTable, String>>() {
             @Override
             public void handle(TableColumn.CellEditEvent<IncomeTable, String> t) {
-
-                System.out.println(t.getNewValue());
-                System.out.println(t.getOldValue());
-                System.out.println(t.getRowValue());
-
                 BigDecimal amount = new BigDecimal(t.getRowValue().getAmount());
                 BigDecimal price = new BigDecimal(t.getNewValue());
                 BigDecimal withNoTax = amount.multiply(price);

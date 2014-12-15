@@ -6,7 +6,6 @@ import com.kiev.msupport.domain.*;
 import javax.persistence.*;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Root;
 import java.math.BigDecimal;
 import java.util.*;
@@ -17,7 +16,7 @@ public class MaterialsMngrBean {
 
     CriteriaBuilder builder = em.getCriteriaBuilder();
 
-    public Manager manager;
+    public Manager manager = updateEntity(new Manager("Oleg Pigolenko"));
 
     public void bootstrap() {
         manager = new Manager("Oleg Pigolenko");
