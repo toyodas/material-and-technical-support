@@ -26,8 +26,11 @@ public class ContragentController {
     public Label fullPriceWithTax;
     public Label selectedSumPrice;
 
+    private ContragentController self;
+
 
     public ContragentController(final long index) {
+        self = this;
         this.index = index;
         name = new TextField("");
         name.setPromptText("Поставщик");
@@ -62,7 +65,6 @@ public class ContragentController {
         priceForOne.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Prices, String>>() {
             @Override
             public void handle(TableColumn.CellEditEvent<Prices, String> t) {
-
                 Prices prices = t.getRowValue();
                 BigDecimal v = new BigDecimal(t.getNewValue());
                 int row = prices.getRow();
@@ -75,10 +77,12 @@ public class ContragentController {
                 for(ContragentController c: pt.getClist()){
                     Prices p = c.price.getItems().get(row);
                     BigDecimal val = new BigDecimal(p.getPriceForOne());
-                    if(v.compareTo(val) == 1){
+                    if(c != self && v.compareTo(val) == 1){
                         min = val;
                     }
                 }
+
+                pt.setMinPrice(min.toString());
 
                 BigDecimal sum = new BigDecimal(0);
                 for(Prices p : price.getItems()){
