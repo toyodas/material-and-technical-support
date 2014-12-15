@@ -57,6 +57,8 @@ public class ContragentController {
         };
 
         priceForOne = new TableColumn<Prices, String>("Цена без НДС");
+        price.getSelectionModel().setCellSelectionEnabled(true);
+        price.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
         priceForOne.setEditable(true);
         priceForOne.setCellValueFactory(new PropertyValueFactory<Prices, String>("priceForOne"));
@@ -90,9 +92,7 @@ public class ContragentController {
                 }
 
                 fullPriceWithTax.setText(sum.toString());
-
                 prices.getProduct().getItems().get(row).setMinPrice(min.toString());
-
                 t.getRowValue().setPriceForOne(t.getNewValue());
             }
         });
