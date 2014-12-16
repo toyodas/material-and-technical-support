@@ -48,12 +48,7 @@ public class RequestTableController implements Initializable {
     private Label error;
     @FXML
     private Button addToDBB;
-    @FXML
-    private ListView<String> presentNames;
-    @FXML
-    private Tooltip tooltip;
-    @FXML
-    private Button reimport;
+
 
     MaterialsMngrBean db = Main.db;
 
@@ -76,7 +71,6 @@ public class RequestTableController implements Initializable {
         }
 
         unitIt.setItems(FXCollections.observableArrayList(unitCombos));
-
 
         List<DepartmentEntity> departmentEntities  = db.findAll(DepartmentEntity.class);
         List<ComboItem> depCombos = new ArrayList<ComboItem>();
