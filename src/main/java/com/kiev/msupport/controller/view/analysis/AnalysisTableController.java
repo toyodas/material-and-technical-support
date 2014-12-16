@@ -182,11 +182,20 @@ public class AnalysisTableController implements Initializable {
 
     private void buildNewContagentColumn(int index){
         //update contragent view
-        ContragentController controller = new ContragentController(index);
+        ContragentController controller = new ContragentController(index, this);
         controller.newGridColumn(index, grid);
 
         //update conragentModel
         contragentMap.put(index, controller);
+    }
+
+    public void updateFullPrice(){
+        BigDecimal sum = new BigDecimal(0);
+        for( Map.Entry<Integer, ContragentController> table : contragentMap.entrySet()){
+            ContragentController c = table.getValue();
+            sum = sum.add(new BigDecimal(c.selectedSumPrice.getText()));
+        }
+        fullPrice.setText(sum.toString());
     }
 }
 

@@ -1,7 +1,9 @@
 package com.kiev.msupport.controller.view.analysis.contragent;
 
 import com.kiev.msupport.controller.utils.EditingCell;
+import com.kiev.msupport.controller.view.analysis.AnalysisTableController;
 import com.kiev.msupport.controller.view.analysis.ProductTable;
+import javafx.collections.ListChangeListener;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.*;
@@ -27,11 +29,14 @@ public class ContragentController {
     public Label selectedSumPrice;
 
     private ContragentController self;
+    private AnalysisTableController parent;
 
 
-    public ContragentController(final long index) {
+    public ContragentController(final long index, final AnalysisTableController parent) {
         self = this;
+        this.parent  = parent;
         this.index = index;
+
         name = new TextField("");
         name.setPromptText("Поставщик");
 
@@ -76,10 +81,10 @@ public class ContragentController {
                 t.getRowValue().setPriceForAll(v.multiply(amount).toString());
 
                 BigDecimal min = v;
-                for(ContragentController c: pt.getClist()){
+                for (ContragentController c : pt.getClist()) {
                     Prices p = c.price.getItems().get(row);
                     BigDecimal val = new BigDecimal(p.getPriceForOne());
-                    if(c != self && v.compareTo(val) == 1){
+                    if (c != self && v.compareTo(val) == 1) {
                         min = val;
                     }
                 }
@@ -87,26 +92,44 @@ public class ContragentController {
                 pt.setMinPrice(min.toString());
 
                 BigDecimal sum = new BigDecimal(0);
-                for(Prices p : price.getItems()){
+                for (Prices p : price.getItems()) {
                     sum = sum.add(new BigDecimal(p.getPriceForAll()));
                 }
 
                 fullPriceWithTax.setText(sum.toString());
                 prices.getProduct().getItems().get(row).setMinPrice(min.toString());
+
                 t.getRowValue().setPriceForOne(t.getNewValue());
             }
         });
 
+
+
         priceForAll = new TableColumn<Prices, String>("Сумма с НДС");
         priceForAll.setCellValueFactory(new PropertyValueFactory<Prices, String>("priceForAll"));
 
+        price.getSelectionModel().getSelectedIndices().addListener(new ListChangeListener<Integer>(){
+            @Override
+            public void onChanged(Change<? extends Integer> change){
+                if(!change.getList().isEmpty()){
+                    BigDecimal sum = new BigDecimal(0);
+                    for(Integer i:change.getList()){
+                        BigDecimal bd = new BigDecimal(priceForAll.getCellData(i));
+                        sum = sum.add(bd);
+                    }
+                    selectedSumPrice.setText(sum.toString());
+                    parent.updateFullPrice();
+                }
+            }
+        });
+
         price.getColumns().addAll(priceForOne, priceForAll);
 
-        fullPriceWithTax = new Label("");
-        selectedSumPrice = new Label("");
+        fullPriceWithTax = new Label("0");
+        selectedSumPrice = new Label("0");
     }
 
-    public void newGridColumn(int colIndex, GridPane gridPane){
+    public void newGridColumn(int colIndex, GridPane gridPane) {
         gridPane.addColumn(colIndex);
         int row = 0;
         gridPane.getColumnConstraints().addAll(new ColumnConstraints());
@@ -120,7 +143,7 @@ public class ContragentController {
         gridPane.add(anchored(selectedSumPrice), colIndex, row++);
     }
 
-    private AnchorPane anchored(Node node){
+    private AnchorPane anchored(Node node) {
         AnchorPane anchorPane = new AnchorPane();
         AnchorPane.setTopAnchor(node, 0d);
         AnchorPane.setBottomAnchor(node, 0d);
