@@ -5,8 +5,6 @@ import com.kiev.msupport.controller.db.MaterialsMngrBean;
 import com.kiev.msupport.controller.utils.ComboItem;
 import com.kiev.msupport.controller.utils.Tables;
 import com.kiev.msupport.domain.CategoryEntity;
-import com.kiev.msupport.domain.ReportEntity;
-
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
@@ -17,8 +15,9 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.ResourceBundle;
 
 public class ReportTableController implements Initializable {
     @FXML
@@ -51,19 +50,16 @@ public class ReportTableController implements Initializable {
     private Button filterB;
     @FXML
     private Button unfilterB;
+    @FXML
+    private Pagination reportPages;
 
-
-
-    private Map<Long, ReportEntity> entities;
     MaterialsMngrBean db = Main.db;
-
     ObservableList<ReportTable> data = FXCollections.observableArrayList();
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        List<ReportTable> tableData = db.getReports(0, 10);
-        data = FXCollections.observableArrayList(tableData);
 
+        setItems(db.getReports());
         category.setCellValueFactory(new PropertyValueFactory<ReportTable, String>("category"));
         name.setCellValueFactory(new PropertyValueFactory<ReportTable, String>("name"));
         units.setCellValueFactory(new PropertyValueFactory<ReportTable, String>("units"));
@@ -74,7 +70,7 @@ public class ReportTableController implements Initializable {
         demand.setCellValueFactory(new PropertyValueFactory<ReportTable, String>("demand"));
         monthIncome.setCellValueFactory(new PropertyValueFactory<ReportTable, String>("monthIncome"));
 
-        for(TableColumn col : reportTable.getColumns()){
+        for (TableColumn col : reportTable.getColumns()) {
             Tables.makeHeaderWrappable(col);
         }
 
@@ -83,7 +79,7 @@ public class ReportTableController implements Initializable {
         reimport.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                data = FXCollections.observableArrayList(db.getReports(0, 10));
+                data = FXCollections.observableArrayList(db.getReports());
                 reportTable.setItems(data);
             }
         });
@@ -92,21 +88,27 @@ public class ReportTableController implements Initializable {
         //interactivity
         List<CategoryEntity> categoryEntities = db.findAll(CategoryEntity.class);
         List<ComboItem> comboItems = new ArrayList<ComboItem>();
-        for(CategoryEntity e:categoryEntities){
+        for (CategoryEntity e : categoryEntities) {
             comboItems.add(new ComboItem(e.getId(), e.getName()));
         }
+
         categoryFilter.setItems(FXCollections.observableArrayList(comboItems));
 
         filterB.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
                 List<ReportTable> tableData;
-                if(!nameFilter.getText().isEmpty() && categoryFilter.getValue()==null){
+                if (!nameFilter.getText().isEmpty() && categoryFilter.getValue() == null) {
                     tableData = db.getReports(nameFilter.getText());
                     setItems(tableData);
                 }
 
-                if(!nameFilter.getText().isEmpty() && categoryFilter.getValue()!=null){
+                if (nameFilter.getText().isEmpty() && categoryFilter.getValue() != null) {
+                    tableData = db.getReports(categoryFilter.getValue().getId());
+                    setItems(tableData);
+                }
+
+                if (!nameFilter.getText().isEmpty() && categoryFilter.getValue() != null) {
                     tableData = db.getReports(nameFilter.getText(), categoryFilter.getValue().getId());
                     setItems(tableData);
                 }
@@ -116,12 +118,14 @@ public class ReportTableController implements Initializable {
         unfilterB.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                setItems(db.getReports(0, 10));
+                categoryFilter.getSelectionModel().clearSelection();
+                setItems(db.getReports());
             }
         });
     }
 
-    private void setItems(List<ReportTable> tableData){
+    private void setItems(List<ReportTable> tableData) {
         reportTable.setItems(FXCollections.observableArrayList(tableData));
     }
+
 }

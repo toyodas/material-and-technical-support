@@ -2,6 +2,7 @@ package com.kiev.msupport.controller.view.analysis;
 
 import com.kiev.msupport.Main;
 import com.kiev.msupport.controller.db.MaterialsMngrBean;
+import com.kiev.msupport.controller.utils.ComboItem;
 import com.kiev.msupport.controller.utils.Tables;
 import com.kiev.msupport.domain.AnalysisEntity;
 import com.kiev.msupport.domain.CategoryEntity;
@@ -54,6 +55,16 @@ public class AnalyticsShowTableController implements Initializable {
     private Button printButton;
     @FXML
     private Button updateData;
+    @FXML
+    private ComboBox<ComboItem> categoryFilter;
+    @FXML
+    private ComboBox<ComboItem> managerFilter;
+    @FXML
+    private Button filterB;
+    @FXML
+    private Button unfilterB;
+
+
 
 
     private MaterialsMngrBean db = Main.db;
@@ -62,7 +73,54 @@ public class AnalyticsShowTableController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
-        List<AnalyticsTable> list = getData(0, 10);
+        List<CategoryEntity> categoryEntities = db.findAll(CategoryEntity.class);
+        List<ComboItem> comboItems = new ArrayList<ComboItem>();
+        for(CategoryEntity e:categoryEntities){
+            comboItems.add(new ComboItem(e.getId(), e.getName()));
+        }
+        categoryFilter.setItems(FXCollections.observableArrayList(comboItems));
+
+        final List<Manager> managers = db.findAll(Manager.class);
+        List<ComboItem> managersItems = new ArrayList<ComboItem>();
+        for(Manager e:managers){
+            managersItems.add(new ComboItem(e.getId(), e.getFullName()));
+        }
+        managerFilter.setItems(FXCollections.observableArrayList(managersItems));
+
+        filterB.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                List<AnalysisEntity> tableData;
+                if (managerFilter.getValue() == null && categoryFilter.getValue() != null) {
+                    tableData = db.getAnalyticsByCategory(categoryFilter.getValue().getId());
+                    data = FXCollections.observableArrayList(getData(tableData));
+                    showTable.setItems(data);
+                }
+
+                if (managerFilter.getValue() != null && categoryFilter.getValue() == null) {
+                    tableData = db.getAnalyticsByManager(managerFilter.getValue().getId());
+                    data = FXCollections.observableArrayList(getData(tableData));
+                    showTable.setItems(data);
+                }
+
+                if (managerFilter.getValue() != null && categoryFilter.getValue() != null) {
+                    tableData = db.getAnalyticsByManagerAndCategory(
+                            managerFilter.getValue().getId(),
+                            categoryFilter.getValue().getId()
+                    );
+                    data = FXCollections.observableArrayList(getData(tableData));
+                    showTable.setItems(data);
+                }
+            }
+        });
+
+        unfilterB.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                data = FXCollections.observableArrayList(getData(db.<AnalysisEntity>findAll(AnalysisEntity.class)));
+                showTable.setItems(data);
+            }
+        });
 
         id.setCellValueFactory(new PropertyValueFactory<AnalyticsTable, Long>("id"));
         date.setCellValueFactory(new PropertyValueFactory<AnalyticsTable, String>("date"));
@@ -115,20 +173,19 @@ public class AnalyticsShowTableController implements Initializable {
         updateData.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                data = FXCollections.observableArrayList(getData(0, 10));
+                data = FXCollections.observableArrayList(getData(db.<AnalysisEntity>findAll(AnalysisEntity.class)));
                 showTable.setItems(data);
             }
         });
 
         showTable.getColumns().get(showTable.getColumns().size() - 1).setPrefWidth(100);
-        data = FXCollections.observableArrayList(getData(0, 10));
+        data = FXCollections.observableArrayList(getData(db.<AnalysisEntity>findAll(AnalysisEntity.class)));
         showTable.setItems(data);
     }
 
-    private List<AnalyticsTable> getData(int from, int to){
-        List<AnalysisEntity> offset = db.findOffset(from, to, AnalysisEntity.class);
+    private List<AnalyticsTable> getData(List<AnalysisEntity> dataA){
         List<AnalyticsTable> list = new ArrayList<AnalyticsTable>();
-        for (AnalysisEntity e : offset) {
+        for (AnalysisEntity e : dataA) {
 
             final ImageView imageview = new ImageView();
             imageview.setFitHeight(100);

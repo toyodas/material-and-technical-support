@@ -44,7 +44,7 @@ public class MaterialsMngrBean {
         CriteriaQuery<T> select = cQuery.select(start);
 
         TypedQuery typedQuery = em.createQuery(select);
-        typedQuery.setFirstResult(from);
+        typedQuery.setFirstResult(from * pageSize);
         typedQuery.setMaxResults(pageSize);
         return typedQuery.getResultList();
     }
@@ -128,6 +128,7 @@ public class MaterialsMngrBean {
 
         return bd;
     }
+
     private BigDecimal incomePriceSum(List<IncomeEntity> list) {
         BigDecimal bd = new BigDecimal(0);
 
@@ -138,6 +139,7 @@ public class MaterialsMngrBean {
 
         return bd;
     }
+
     private BigDecimal expenseAmountSum(List<ExpenseEntity> list) {
         BigDecimal bd = new BigDecimal(0);
         if (list == null || list.isEmpty()) return null;
@@ -170,6 +172,19 @@ public class MaterialsMngrBean {
         return reportTableList;
     }
 
+    public List<ReportTable> getReports(Long categoryId) {
+        List<ReportTable> reportTableList = new ArrayList<ReportTable>();
+        try {
+            CategoryEntity category = em.find(CategoryEntity.class, categoryId);
+            List<MTREntity> mtrs = getListByName(MTREntity.class, null, category);
+            reportTableList = generateReportsForMTR(mtrs);
+        } catch (NoResultException e) {
+            e.printStackTrace();
+        }
+
+        return reportTableList;
+    }
+
     public List<ReportTable> getReports(String name, Long categoryId) {
         List<ReportTable> reportTableList = new ArrayList<ReportTable>();
         try {
@@ -184,10 +199,10 @@ public class MaterialsMngrBean {
     }
 
 
-    public List<ReportTable> getReports(int from, int length) {
+    public List<ReportTable> getReports() {
         List<ReportTable> reportTableList = new ArrayList<ReportTable>();
         try {
-            List<MTREntity> mtrs = findOffset(from, length, MTREntity.class);
+            List<MTREntity> mtrs = findAll(MTREntity.class);
             reportTableList = generateReportsForMTR(mtrs);
         } catch (NoResultException e) {
             e.printStackTrace();
@@ -231,7 +246,7 @@ public class MaterialsMngrBean {
                 BigDecimal incomeSum = incomeAmountSum(incomesMap.get(d));
                 BigDecimal expenseSum = expenseAmountSum(expenseMap.get(d));
 
-                if (incomeSum != null && expenseSum!=null) residueForToday = incomeSum.subtract(expenseSum);
+                if (incomeSum != null && expenseSum != null) residueForToday = incomeSum.subtract(expenseSum);
                 else residueForToday = null;
                 fullPrice = incomePriceSum(incomesMap.get(d));
 
@@ -239,7 +254,7 @@ public class MaterialsMngrBean {
                 BigDecimal expenseSumP = expenseAmountSum(expenseMapInMonth.get(d));
                 BigDecimal requestSumP = requestAmountSum(requestMapInMonth.get(d));
 
-                if (incomeSumP != null && expenseSumP!=null) residueForPeriod = incomeSumP.subtract(expenseSumP);
+                if (incomeSumP != null && expenseSumP != null) residueForPeriod = incomeSumP.subtract(expenseSumP);
                 else residueForPeriod = null;
                 monthIncome = incomeSumP;
                 demand = requestSumP;
@@ -272,9 +287,10 @@ public class MaterialsMngrBean {
     public <T> T getEntity(Class<T> clazz, Long id) {
         return em.find(clazz, id);
     }
-    public CategoryEntity categoryIfNotExist(String name){
+
+    public CategoryEntity categoryIfNotExist(String name) {
         CategoryEntity r = getByName(CategoryEntity.class, name);
-        if(r == null){
+        if (r == null) {
             r = updateEntity(new CategoryEntity(name));
         }
         return r;
@@ -289,9 +305,9 @@ public class MaterialsMngrBean {
         TypedQuery<T> tquery = em.createQuery(q);
 
         T result = null;
-        try{
+        try {
             result = tquery.getSingleResult();
-        } catch(NoResultException e){
+        } catch (NoResultException e) {
             e.printStackTrace();
         }
         return result;
@@ -302,25 +318,42 @@ public class MaterialsMngrBean {
         EntityType<T> type = em.getMetamodel().entity(clazz);
         CriteriaQuery<T> q = cb.createQuery(clazz);
         Root<T> c = q.from(clazz);
-        q.select(c).where(
-                cb.like(
-                        cb.lower(
-                                c.get(
-                                        type.getDeclaredSingularAttribute("name", String.class)
-                                )
-                        ), "%" + name.toLowerCase() + "%"
-                ));
 
-        if(category!=null){
-            q.where(cb.equal(c.get("category"), category));
+        q.select(c);
+
+        if (name != null && !name.isEmpty() && category == null) {
+            q = q.where(
+                    cb.like(
+                            cb.lower(
+                                    c.get(
+                                            type.getDeclaredSingularAttribute("name", String.class)
+                                    )
+                            ), "%" + name.toLowerCase() + "%"
+                    ));
+        }
+
+        if (name != null && !name.isEmpty() && category != null) {
+                q = q.where(
+                        cb.and(
+                                cb.like(
+                                        cb.lower(
+                                                c.get(
+                                                        type.getDeclaredSingularAttribute("name", String.class)
+                                                )
+                                        ), "%" + name.toLowerCase() + "%"
+                                ), cb.equal(c.get("category"), category)));
+        }
+
+        if((name == null||name.isEmpty()) && category!=null){
+            q = q.where(cb.equal(c.get("category"), category));
         }
 
         TypedQuery<T> tquery = em.createQuery(q);
 
         List<T> result = null;
-        try{
+        try {
             result = tquery.getResultList();
-        } catch(NoResultException e){
+        } catch (NoResultException e) {
             e.printStackTrace();
         }
         return result;
@@ -333,5 +366,56 @@ public class MaterialsMngrBean {
         et.commit();
         return upd;
     }
+
+//    public long countMtrs(){
+//        CriteriaBuilder qb = em.getCriteriaBuilder();
+//        CriteriaQuery<Long> cq = qb.createQuery(Long.class);
+//        cq.select(qb.count(cq.from(MTREntity.class)));
+//        return em.createQuery(cq).getSingleResult();
+//    }
+
+
+    public <T> List<T> getByManagerAndCategory(Class<T> clazz, Manager man, CategoryEntity category) {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<T> q = cb.createQuery(clazz);
+        Root<T> c = q.from(clazz);
+        if(category == null && man !=null){
+            q = q.select(c).where(cb.equal(c.get("manager"), man));
+        }
+        if(category != null && man == null){
+            q = q.where(cb.equal(c.get("category"), category));
+        }
+
+        if (category != null && man!=null) {
+            q = q.where(cb.and(cb.equal(c.get("category"), category), cb.equal(c.get("manager"), man)));
+        }
+
+        TypedQuery<T> tquery = em.createQuery(q);
+
+        List<T> result = null;
+        try {
+            result = tquery.getResultList();
+        } catch (NoResultException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    public List<AnalysisEntity> getAnalyticsByCategory(Long categoryId) {
+        CategoryEntity category = em.find(CategoryEntity.class, categoryId);
+        return getByManagerAndCategory(AnalysisEntity.class, null, category);
+    }
+
+    public List<AnalysisEntity> getAnalyticsByManager(Long managerId) {
+        Manager man = em.find(Manager.class, managerId);
+        return getByManagerAndCategory(AnalysisEntity.class, man, null);
+    }
+
+    public List<AnalysisEntity> getAnalyticsByManagerAndCategory(Long managerId, Long categoryId) {
+        Manager man = em.find(Manager.class, managerId);
+        CategoryEntity category = em.find(CategoryEntity.class, categoryId);
+        return getByManagerAndCategory(AnalysisEntity.class, man, category);
+    }
+
 
 }
