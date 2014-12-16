@@ -2,7 +2,9 @@ package com.kiev.msupport.controller.view.report;
 
 import com.kiev.msupport.Main;
 import com.kiev.msupport.controller.db.MaterialsMngrBean;
+import com.kiev.msupport.controller.utils.ComboItem;
 import com.kiev.msupport.controller.utils.Tables;
+import com.kiev.msupport.domain.CategoryEntity;
 import com.kiev.msupport.domain.ReportEntity;
 
 import javafx.collections.FXCollections;
@@ -41,6 +43,15 @@ public class ReportTableController implements Initializable {
     private TableColumn<ReportTable, String> monthIncome;
     @FXML
     private Button reimport;
+    @FXML
+    private ComboBox<ComboItem> categoryFilter;
+    @FXML
+    private TextField nameFilter;
+    @FXML
+    private Button filterB;
+    @FXML
+    private Button unfilterB;
+
 
 
     private Map<Long, ReportEntity> entities;
@@ -50,7 +61,6 @@ public class ReportTableController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-
         List<ReportTable> tableData = db.getReports(0, 10);
         data = FXCollections.observableArrayList(tableData);
 
@@ -77,5 +87,41 @@ public class ReportTableController implements Initializable {
                 reportTable.setItems(data);
             }
         });
+
+
+        //interactivity
+        List<CategoryEntity> categoryEntities = db.findAll(CategoryEntity.class);
+        List<ComboItem> comboItems = new ArrayList<ComboItem>();
+        for(CategoryEntity e:categoryEntities){
+            comboItems.add(new ComboItem(e.getId(), e.getName()));
+        }
+        categoryFilter.setItems(FXCollections.observableArrayList(comboItems));
+
+        filterB.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                List<ReportTable> tableData;
+                if(!nameFilter.getText().isEmpty() && categoryFilter.getValue()==null){
+                    tableData = db.getReports(nameFilter.getText());
+                    setItems(tableData);
+                }
+
+                if(!nameFilter.getText().isEmpty() && categoryFilter.getValue()!=null){
+                    tableData = db.getReports(nameFilter.getText(), categoryFilter.getValue().getId());
+                    setItems(tableData);
+                }
+            }
+        });
+
+        unfilterB.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                setItems(db.getReports(0, 10));
+            }
+        });
+    }
+
+    private void setItems(List<ReportTable> tableData){
+        reportTable.setItems(FXCollections.observableArrayList(tableData));
     }
 }

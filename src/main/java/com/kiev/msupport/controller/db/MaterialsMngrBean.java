@@ -7,6 +7,7 @@ import javax.persistence.*;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import javax.persistence.metamodel.EntityType;
 import java.math.BigDecimal;
 import java.util.*;
 
@@ -127,7 +128,6 @@ public class MaterialsMngrBean {
 
         return bd;
     }
-
     private BigDecimal incomePriceSum(List<IncomeEntity> list) {
         BigDecimal bd = new BigDecimal(0);
 
@@ -138,7 +138,6 @@ public class MaterialsMngrBean {
 
         return bd;
     }
-
     private BigDecimal expenseAmountSum(List<ExpenseEntity> list) {
         BigDecimal bd = new BigDecimal(0);
         if (list == null || list.isEmpty()) return null;
@@ -159,78 +158,24 @@ public class MaterialsMngrBean {
         return bd;
     }
 
-    public List<ReportTable> getReports(int from, int length) {
+    public List<ReportTable> getReports(String name) {
         List<ReportTable> reportTableList = new ArrayList<ReportTable>();
         try {
-            Calendar c = Calendar.getInstance();
-            c.set(Calendar.DAY_OF_MONTH, 1);
-            Date currentMonthStartDate = c.getTime();
+            List<MTREntity> mtrs = getListByName(MTREntity.class, name, null);
+            reportTableList = generateReportsForMTR(mtrs);
+        } catch (NoResultException e) {
+            e.printStackTrace();
+        }
 
-            List<MTREntity> mtrs = findOffset(from, length, MTREntity.class);
-            for (MTREntity mtr : mtrs) {
+        return reportTableList;
+    }
 
-                Map<Long, ArrayList<IncomeEntity>> incomesMap = groupedByDepartmentFoundByMTR(mtr, IncomeEntity.class);
-                Map<Long, ArrayList<ExpenseEntity>> expenseMap = groupedByDepartmentFoundByMTR(mtr, ExpenseEntity.class);
-
-                Map<Long, ArrayList<IncomeEntity>> incomesMapInMonth =
-                        groupedByDepartmentFoundByMTRByDate(mtr, IncomeEntity.class, currentMonthStartDate);
-                Map<Long, ArrayList<ExpenseEntity>> expenseMapInMonth
-                        = groupedByDepartmentFoundByMTRByDate(mtr, ExpenseEntity.class, currentMonthStartDate);
-                Map<Long, ArrayList<RequestEntity>> requestMapInMonth
-                        = groupedByDepartmentFoundByMTRByDate(mtr, RequestEntity.class, currentMonthStartDate);
-
-
-                //filter by departments
-
-                List<DepartmentEntity> deps = findAll(DepartmentEntity.class);
-                //all times queries
-                BigDecimal residueForToday;
-                BigDecimal fullPrice;
-                BigDecimal residueForPeriod;
-                BigDecimal monthIncome;
-                BigDecimal demand;
-
-                for (DepartmentEntity dep : deps) {
-                    Long d = dep.getId();
-                    BigDecimal incomeSum = incomeAmountSum(incomesMap.get(d));
-                    BigDecimal expenseSum = expenseAmountSum(expenseMap.get(d));
-
-                    if (incomeSum != null && expenseSum!=null) residueForToday = incomeSum.subtract(expenseSum);
-                    else residueForToday = null;
-                    fullPrice = incomePriceSum(incomesMap.get(d));
-
-                    BigDecimal incomeSumP = incomeAmountSum(incomesMapInMonth.get(d));
-                    BigDecimal expenseSumP = expenseAmountSum(expenseMapInMonth.get(d));
-                    BigDecimal requestSumP = requestAmountSum(requestMapInMonth.get(d));
-
-                    if (incomeSumP != null && expenseSumP!=null) residueForPeriod = incomeSumP.subtract(expenseSumP);
-                    else residueForPeriod = null;
-                    monthIncome = incomeSumP;
-                    demand = requestSumP;
-
-                    if (residueForPeriod == null
-                            && residueForToday == null
-                            && demand == null
-                            && monthIncome == null
-                            && fullPrice == null) {
-                        continue;
-                    }
-
-                    ReportTable rep = new ReportTable(
-                            mtr.getCategory().getName(),
-                            mtr.getName(),
-                            mtr.getUnits().getName(),
-                            dep.getName(),
-                            residueForToday == null ? "0" : residueForToday.toString(),
-                            residueForPeriod == null ? "0" : residueForPeriod.toString(),
-                            fullPrice.toString(),
-                            demand == null ? "0" : demand.toString(),
-                            monthIncome == null ? "0" : monthIncome.toString());
-
-                    reportTableList.add(rep);
-                }
-
-            }
+    public List<ReportTable> getReports(String name, Long categoryId) {
+        List<ReportTable> reportTableList = new ArrayList<ReportTable>();
+        try {
+            CategoryEntity category = em.find(CategoryEntity.class, categoryId);
+            List<MTREntity> mtrs = getListByName(MTREntity.class, name, category);
+            reportTableList = generateReportsForMTR(mtrs);
         } catch (NoResultException e) {
             e.printStackTrace();
         }
@@ -239,11 +184,94 @@ public class MaterialsMngrBean {
     }
 
 
+    public List<ReportTable> getReports(int from, int length) {
+        List<ReportTable> reportTableList = new ArrayList<ReportTable>();
+        try {
+            List<MTREntity> mtrs = findOffset(from, length, MTREntity.class);
+            reportTableList = generateReportsForMTR(mtrs);
+        } catch (NoResultException e) {
+            e.printStackTrace();
+        }
+
+        return reportTableList;
+    }
+
+    private List<ReportTable> generateReportsForMTR(List<MTREntity> mtrs) {
+        List<ReportTable> reportTableList = new ArrayList<ReportTable>();
+
+        Calendar c = Calendar.getInstance();
+        c.set(Calendar.DAY_OF_MONTH, 1);
+        Date currentMonthStartDate = c.getTime();
+
+        for (MTREntity mtr : mtrs) {
+
+            Map<Long, ArrayList<IncomeEntity>> incomesMap = groupedByDepartmentFoundByMTR(mtr, IncomeEntity.class);
+            Map<Long, ArrayList<ExpenseEntity>> expenseMap = groupedByDepartmentFoundByMTR(mtr, ExpenseEntity.class);
+
+            Map<Long, ArrayList<IncomeEntity>> incomesMapInMonth =
+                    groupedByDepartmentFoundByMTRByDate(mtr, IncomeEntity.class, currentMonthStartDate);
+            Map<Long, ArrayList<ExpenseEntity>> expenseMapInMonth
+                    = groupedByDepartmentFoundByMTRByDate(mtr, ExpenseEntity.class, currentMonthStartDate);
+            Map<Long, ArrayList<RequestEntity>> requestMapInMonth
+                    = groupedByDepartmentFoundByMTRByDate(mtr, RequestEntity.class, currentMonthStartDate);
+
+
+            //filter by departments
+
+            List<DepartmentEntity> deps = findAll(DepartmentEntity.class);
+            //all times queries
+            BigDecimal residueForToday;
+            BigDecimal fullPrice;
+            BigDecimal residueForPeriod;
+            BigDecimal monthIncome;
+            BigDecimal demand;
+
+            for (DepartmentEntity dep : deps) {
+                Long d = dep.getId();
+                BigDecimal incomeSum = incomeAmountSum(incomesMap.get(d));
+                BigDecimal expenseSum = expenseAmountSum(expenseMap.get(d));
+
+                if (incomeSum != null && expenseSum!=null) residueForToday = incomeSum.subtract(expenseSum);
+                else residueForToday = null;
+                fullPrice = incomePriceSum(incomesMap.get(d));
+
+                BigDecimal incomeSumP = incomeAmountSum(incomesMapInMonth.get(d));
+                BigDecimal expenseSumP = expenseAmountSum(expenseMapInMonth.get(d));
+                BigDecimal requestSumP = requestAmountSum(requestMapInMonth.get(d));
+
+                if (incomeSumP != null && expenseSumP!=null) residueForPeriod = incomeSumP.subtract(expenseSumP);
+                else residueForPeriod = null;
+                monthIncome = incomeSumP;
+                demand = requestSumP;
+
+                if (residueForPeriod == null
+                        && residueForToday == null
+                        && demand == null
+                        && monthIncome == null
+                        && fullPrice == null) {
+                    continue;
+                }
+
+                ReportTable rep = new ReportTable(
+                        mtr.getCategory().getName(),
+                        mtr.getName(),
+                        mtr.getUnits().getName(),
+                        dep.getName(),
+                        residueForToday == null ? "0" : residueForToday.toString(),
+                        residueForPeriod == null ? "0" : residueForPeriod.toString(),
+                        fullPrice.toString(),
+                        demand == null ? "0" : demand.toString(),
+                        monthIncome == null ? "0" : monthIncome.toString());
+
+                reportTableList.add(rep);
+            }
+        }
+        return reportTableList;
+    }
+
     public <T> T getEntity(Class<T> clazz, Long id) {
         return em.find(clazz, id);
     }
-
-
     public CategoryEntity categoryIfNotExist(String name){
         CategoryEntity r = getByName(CategoryEntity.class, name);
         if(r == null){
@@ -253,7 +281,6 @@ public class MaterialsMngrBean {
     }
 
     public <T> T getByName(Class<T> clazz, String name) {
-
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<T> q = cb.createQuery(clazz);
         Root<T> c = q.from(clazz);
@@ -263,7 +290,36 @@ public class MaterialsMngrBean {
 
         T result = null;
         try{
-            tquery.getSingleResult();
+            result = tquery.getSingleResult();
+        } catch(NoResultException e){
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    public <T> List<T> getListByName(Class<T> clazz, String name, CategoryEntity category) {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        EntityType<T> type = em.getMetamodel().entity(clazz);
+        CriteriaQuery<T> q = cb.createQuery(clazz);
+        Root<T> c = q.from(clazz);
+        q.select(c).where(
+                cb.like(
+                        cb.lower(
+                                c.get(
+                                        type.getDeclaredSingularAttribute("name", String.class)
+                                )
+                        ), "%" + name.toLowerCase() + "%"
+                ));
+
+        if(category!=null){
+            q.where(cb.equal(c.get("category"), category));
+        }
+
+        TypedQuery<T> tquery = em.createQuery(q);
+
+        List<T> result = null;
+        try{
+            result = tquery.getResultList();
         } catch(NoResultException e){
             e.printStackTrace();
         }

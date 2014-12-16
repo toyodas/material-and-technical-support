@@ -4,11 +4,20 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<fx:root maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="696.0" type="AnchorPane" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.kiev.msupport.controller.view.report.ReportTableController">
+<fx:root maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="515.0" prefWidth="696.0" type="AnchorPane" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.kiev.msupport.controller.view.report.ReportTableController">
     <children>
-      <TitledPane animated="false" prefHeight="400.0" prefWidth="696.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-        <content>
-          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+      <SplitPane dividerPositions="0.04678362573099415" orientation="VERTICAL" prefHeight="400.0" prefWidth="696.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <items>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="17.0" prefWidth="694.0">
+               <children>
+                  <Button fx:id="unfilterB" layoutX="574.0" layoutY="1.0" mnemonicParsing="false" text="Сбросить фильтр" />
+                  <Button fx:id="reimport" layoutX="13.0" layoutY="1.0" mnemonicParsing="false" text="Обновить" />
+                  <TextField fx:id="nameFilter" layoutX="262.0" promptText="Наименование" />
+                  <ComboBox fx:id="categoryFilter" layoutX="108.0" prefWidth="150.0" promptText="Категория" />
+                  <Button fx:id="filterB" layoutX="441.0" layoutY="1.0" mnemonicParsing="false" text="Отфильтровать" />
+               </children>
+            </AnchorPane>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
                <children>
                     <TableView fx:id="reportTable" editable="true" prefHeight="374.0" prefWidth="694.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                         <columns>
@@ -25,10 +34,7 @@
                     </TableView>
                </children>
             </AnchorPane>
-        </content>
-         <graphic>
-            <Button fx:id="reimport" mnemonicParsing="false" text="Обновить" />
-         </graphic>
-      </TitledPane>
+        </items>
+      </SplitPane>
     </children>
 </fx:root>
