@@ -64,9 +64,6 @@ public class AnalyticsShowTableController implements Initializable {
     @FXML
     private Button unfilterB;
 
-
-
-
     private MaterialsMngrBean db = Main.db;
     private ObservableList<AnalyticsTable> data;
 
@@ -125,7 +122,7 @@ public class AnalyticsShowTableController implements Initializable {
         id.setCellValueFactory(new PropertyValueFactory<AnalyticsTable, Long>("id"));
         date.setCellValueFactory(new PropertyValueFactory<AnalyticsTable, String>("date"));
         category.setCellValueFactory(new PropertyValueFactory<AnalyticsTable, String>("category"));
-        price.setCellValueFactory(new PropertyValueFactory<AnalyticsTable, String>("date"));
+        price.setCellValueFactory(new PropertyValueFactory<AnalyticsTable, String>("price"));
         manager.setCellValueFactory(new PropertyValueFactory<AnalyticsTable, String>("manager"));
         imageView.setCellValueFactory(new PropertyValueFactory<AnalyticsTable, ImageView>("imageView"));
 

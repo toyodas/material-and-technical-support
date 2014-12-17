@@ -125,6 +125,7 @@ public class AnalysisTableController implements Initializable {
                     //todo show error message
 //                    if ("".equals(categoryName.getText())) return;
                     if ("".equals(fullPrice.getText())) fullPrice.setText("0");
+
                     Manager manager = null;
                     if (managerCombo.getValue()!=null) {
                         manager = db.getEntity(Manager.class, managerCombo.getValue().getId());

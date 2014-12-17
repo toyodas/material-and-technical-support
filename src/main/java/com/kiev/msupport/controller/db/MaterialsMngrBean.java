@@ -278,16 +278,18 @@ public class MaterialsMngrBean {
                 BigDecimal incomeSum = incomeAmountSum(incomesMap.get(d));
                 BigDecimal expenseSum = expenseAmountSum(expenseMap.get(d));
 
+                residueForToday = null;
+                if (incomeSum != null && expenseSum == null) residueForToday = incomeSum;
                 if (incomeSum != null && expenseSum != null) residueForToday = incomeSum.subtract(expenseSum);
-                else residueForToday = null;
                 fullPrice = incomePriceSum(incomesMap.get(d));
 
                 BigDecimal incomeSumP = incomeAmountSum(incomesMapInMonth.get(d));
                 BigDecimal expenseSumP = expenseAmountSum(expenseMapInMonth.get(d));
                 BigDecimal requestSumP = requestAmountSum(requestMapInMonth.get(d));
 
+                residueForPeriod = null;
+                if (incomeSumP != null && expenseSumP == null) residueForPeriod = incomeSum;
                 if (incomeSumP != null && expenseSumP != null) residueForPeriod = incomeSumP.subtract(expenseSumP);
-                else residueForPeriod = null;
                 monthIncome = incomeSumP;
                 demand = requestSumP;
 

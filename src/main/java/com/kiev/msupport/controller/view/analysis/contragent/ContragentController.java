@@ -97,6 +97,10 @@ public class ContragentController {
                     sum = sum.add(new BigDecimal(p.getPriceForAll()));
                 }
 
+                if(!logistics.getText().isEmpty()){
+                    sum = sum.add(new BigDecimal(logistics.getText()));
+                }
+
                 fullPriceWithTax.setText(sum.toString());
                 prices.getProduct().getItems().get(row).setMinPrice(min.toString());
 
