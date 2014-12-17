@@ -17,26 +17,58 @@ public class MaterialsMngrBean {
 
     CriteriaBuilder builder = em.getCriteriaBuilder();
 
-    public Manager manager = updateEntity(new Manager("Oleg Pigolenko"));
-
     public void bootstrap() {
-        manager = new Manager("Oleg Pigolenko");
-
-        updateEntity(new CategoryEntity("Огнеупоры"));
-        updateEntity(new CategoryEntity("Тара"));
+        updateEntity(new CategoryEntity("огнеупоры"));
+        updateEntity(new CategoryEntity("кислотоупоры"));
+        updateEntity(new CategoryEntity("упаковка и тара"));
+        updateEntity(new CategoryEntity("металлопрокат"));
+        updateEntity(new CategoryEntity("подшипники"));
+        updateEntity(new CategoryEntity("сырье"));
+        updateEntity(new CategoryEntity("СИЗ"));
+        updateEntity(new CategoryEntity("хоз. товары"));
+        updateEntity(new CategoryEntity("електрика"));
+        updateEntity(new CategoryEntity("КИП"));
+        updateEntity(new CategoryEntity("насосное оборудование"));
+        updateEntity(new CategoryEntity("ж/д запчасти"));
+        updateEntity(new CategoryEntity("авто запчасти"));
+        updateEntity(new CategoryEntity("ГСМ"));
+        updateEntity(new CategoryEntity("нестандартное оборудование"));
+        updateEntity(new CategoryEntity("ферроматериалы"));
 
         updateEntity(new UnitEntity("тн"));
         updateEntity(new UnitEntity("шт"));
         updateEntity(new UnitEntity("кг"));
+        updateEntity(new UnitEntity("м"));
+        updateEntity(new UnitEntity("к-кт"));
+        updateEntity(new UnitEntity("л"));
+        updateEntity(new UnitEntity("п"));
 
-        updateEntity(new DepartmentEntity("рмц№14"));
+        updateEntity(new DepartmentEntity("рмц №1"));
+        updateEntity(new DepartmentEntity("рмц №2"));
+        updateEntity(new DepartmentEntity("рмц №3"));
+        updateEntity(new DepartmentEntity("рмц №4"));
         updateEntity(new DepartmentEntity("склад №1"));
         updateEntity(new DepartmentEntity("склад №2"));
-        updateEntity(new DepartmentEntity("цех №7"));
+        updateEntity(new DepartmentEntity("склад №3"));
+        updateEntity(new DepartmentEntity("склад №4"));
+        updateEntity(new DepartmentEntity("цех №1"));
+        updateEntity(new DepartmentEntity("цех №2"));
         updateEntity(new DepartmentEntity("цех №3"));
+        updateEntity(new DepartmentEntity("цех №4"));
 
-        manager = updateEntity(manager);
+        updateEntity(new Manager("Пиголенко О."));
+        updateEntity(new Manager("Краченко Ж."));
+        updateEntity(new Manager("Петрук І."));
+        updateEntity(new Manager("Селецкая Р."));
+        updateEntity(new Manager("Мироненко Д."));
+        updateEntity(new Manager("Мироненко Д."));
+        updateEntity(new Manager("Коваль А."));
+        updateEntity(new Manager("Олимпиев Н."));
+        updateEntity(new Manager("Рямушкина А."));
+        updateEntity(new Manager("Задворный Ю."));
+        updateEntity(new Manager("Попович К."));
     }
+
 
     public <T> List<T> findOffset(int from, int pageSize, Class clazz) {
         CriteriaQuery<T> cQuery = builder.createQuery(clazz);

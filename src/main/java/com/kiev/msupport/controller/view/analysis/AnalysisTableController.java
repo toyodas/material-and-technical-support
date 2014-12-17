@@ -10,6 +10,7 @@ import com.kiev.msupport.controller.view.analysis.contragent.Prices;
 import com.kiev.msupport.domain.*;
 import javafx.collections.FXCollections;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -18,11 +19,16 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
+import javafx.stage.FileChooser;
 import javafx.util.Callback;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 import javax.imageio.ImageIO;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.util.*;
@@ -32,6 +38,9 @@ public class AnalysisTableController implements Initializable {
     private Button makeScreenshot;
     @FXML
     private Button addContragent;
+    @FXML
+    private ComboBox<ComboItem> managerCombo;
+
     @FXML
     private GridPane grid;
     @FXML
@@ -66,14 +75,43 @@ public class AnalysisTableController implements Initializable {
     private TextField prodAmount;
     @FXML
     private TextField prodPrice;
+    @FXML
+    private Button openMultipleButton;
 
     private AnalysisEntity entity;
     private MaterialsMngrBean db = Main.db;
     private ArrayList<ProductTable> productData;
     private Map<Integer, ContragentController> contragentMap = new HashMap<Integer, ContragentController>();
+    private final FileChooser fileChooser = new FileChooser();
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        List<Manager> managers = db.findAll(Manager.class);
+        List<ComboItem> comboItems = new ArrayList<ComboItem>();
+        for(Manager e:managers){
+            comboItems.add(new ComboItem(e.getId(), e.getFullName()));
+        }
+        managerCombo.setItems(FXCollections.observableArrayList(comboItems));
+
+
+        //importing the file
+
+        openMultipleButton.setOnAction(
+                new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(final ActionEvent e) {
+                        List<File> list =
+                                fileChooser.showOpenMultipleDialog(Main.mainStage);
+                        if (list != null) {
+                            for (File file : list) {
+                                importFile(file);
+                            }
+                        }
+                    }
+                });
+
+
+
         List<UnitEntity> units = db.findAll(UnitEntity.class);
         for(UnitEntity u:units){
             prodUnit.getItems().add(new ComboItem(u.getId(), u.getName()));
@@ -87,9 +125,13 @@ public class AnalysisTableController implements Initializable {
                     //todo show error message
 //                    if ("".equals(categoryName.getText())) return;
                     if ("".equals(fullPrice.getText())) fullPrice.setText("0");
+                    Manager manager = null;
+                    if (managerCombo.getValue()!=null) {
+                        manager = db.getEntity(Manager.class, managerCombo.getValue().getId());
+                    }
 
                     CategoryEntity category = db.categoryIfNotExist(categoryName.getText());
-                    entity = new AnalysisEntity(new Date(), db.manager,
+                    entity = new AnalysisEntity(new Date(), manager,
                             null, category, fullPrice.getText());
                     entity = db.updateEntity(entity);
                     id.setText(Long.toString(entity.getId()));
@@ -196,6 +238,22 @@ public class AnalysisTableController implements Initializable {
             sum = sum.add(new BigDecimal(c.selectedSumPrice.getText()));
         }
         fullPrice.setText(sum.toString());
+    }
+
+    private void importFile(File file){
+        try {
+            POIFSFileSystem fs = new POIFSFileSystem(new FileInputStream(file));
+            HSSFWorkbook wb = new HSSFWorkbook(fs);
+            HSSFSheet sheet = wb.getSheetAt(0);
+            HSSFRow row;
+            HSSFCell cell;
+
+            cell = sheet.getRow(0).getCell(4);
+            System.out.println(cell.getStringCellValue());
+
+        } catch(Exception ioe) {
+            ioe.printStackTrace();
+        }
     }
 }
 

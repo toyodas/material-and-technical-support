@@ -8,14 +8,19 @@ import javafx.scene.text.TextAlignment;
 
 public class Tables {
 
+
     public static void makeHeaderWrappable(TableColumn col) {
+        makeHeaderWrappable(col, 135);
+    }
+
+    public static void makeHeaderWrappable(TableColumn col,  Integer preferredWidth) {
         Label label = new Label(col.getText());
         label.setStyle("-fx-padding: 8px;");
         label.setWrapText(true);
         label.setAlignment(Pos.CENTER);
         label.setTextAlignment(TextAlignment.CENTER);
 
-        col.setPrefWidth(200);
+        col.setPrefWidth(preferredWidth);
         StackPane stack = new StackPane();
         stack.getChildren().add(label);
         stack.prefWidthProperty().bind(col.widthProperty().subtract(5));

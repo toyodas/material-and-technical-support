@@ -15,9 +15,10 @@ public class Main extends Application {
     }
 
     public static MaterialsMngrBean db = new MaterialsMngrBean();
+    public static Stage mainStage;
     @Override
     public void start(Stage stage) throws Exception {
-//        db.bootstrap();
+        db.bootstrap();
 
         AnchorPane page = (AnchorPane)FXMLLoader.load(this.getClass().getClassLoader().getResource("tabs.fxml"));
         Scene scene = new Scene(page);
@@ -35,6 +36,7 @@ public class Main extends Application {
         stage.setResizable(false);
         stage.setScene(scene);
         stage.show();
+        mainStage = stage;
     }
 
 

@@ -48,6 +48,9 @@ public class RequestTableController implements Initializable {
     private Label error;
     @FXML
     private Button addToDBB;
+    @FXML
+    private ComboBox<ComboItem> managerCombo;
+
 
 
     MaterialsMngrBean db = Main.db;
@@ -147,7 +150,12 @@ public class RequestTableController implements Initializable {
                         mtr = db.updateEntity(new MTREntity(category, t.getName(), units));
                     }
 
-                    RequestEntity en = new RequestEntity(mtr, t.getAmount(), dep, new Date(), db.manager);
+                    Manager manager = null;
+                    if (managerCombo.getValue()!=null) {
+                        manager = db.getEntity(Manager.class, managerCombo.getValue().getId());
+                    }
+
+                    RequestEntity en = new RequestEntity(mtr, t.getAmount(), dep, new Date(), manager);
                     db.updateEntity(en);
                 }
 

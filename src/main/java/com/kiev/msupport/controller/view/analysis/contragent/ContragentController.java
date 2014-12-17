@@ -1,6 +1,7 @@
 package com.kiev.msupport.controller.view.analysis.contragent;
 
 import com.kiev.msupport.controller.utils.EditingCell;
+import com.kiev.msupport.controller.utils.Tables;
 import com.kiev.msupport.controller.view.analysis.AnalysisTableController;
 import com.kiev.msupport.controller.view.analysis.ProductTable;
 import javafx.collections.ListChangeListener;
@@ -124,6 +125,9 @@ public class ContragentController {
         });
 
         price.getColumns().addAll(priceForOne, priceForAll);
+        for(TableColumn col:price.getColumns()){
+            Tables.makeHeaderWrappable(col, 130);
+        }
 
         fullPriceWithTax = new Label("0");
         selectedSumPrice = new Label("0");

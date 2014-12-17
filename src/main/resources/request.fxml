@@ -27,6 +27,7 @@
                    <Button fx:id="addToDBB" layoutX="14.0" layoutY="77.0" mnemonicParsing="false" text="Сохранить все в базу" />
                   <Button fx:id="addToTableB" layoutX="364.0" layoutY="34.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="221.0" text="Добавить в таблицу" />
                   <Label fx:id="error" layoutX="364.0" layoutY="70.0" text="Все поля обязательны для заполния!" textFill="RED" visible="false" />
+                  <ComboBox fx:id="managerCombo" layoutX="187.0" layoutY="34.0" prefHeight="25.0" prefWidth="171.0" promptText="Исполнитель" />
                </children>
             </AnchorPane>
         </items>

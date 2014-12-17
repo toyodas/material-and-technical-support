@@ -47,6 +47,8 @@ public class IncomeTableController implements Initializable {
     @FXML
     private ComboBox<ComboItem> depIt;
     @FXML
+    private ComboBox<com.kiev.msupport.controller.utils.ComboItem> managerCombo;
+    @FXML
     private TextField amountIt;
     @FXML
     private TextField priceIt;
@@ -56,10 +58,6 @@ public class IncomeTableController implements Initializable {
     private Label error;
     @FXML
     private Button addToDBB;
-    @FXML
-    private ListView<String> presentNames;
-    @FXML
-    private Tooltip tooltip;
 
     MaterialsMngrBean db = Main.db;
 
@@ -67,6 +65,13 @@ public class IncomeTableController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        List<Manager> managers = db.findAll(Manager.class);
+        List<com.kiev.msupport.controller.utils.ComboItem> it = new ArrayList<com.kiev.msupport.controller.utils.ComboItem>();
+        for(Manager e:managers){
+            it.add(new com.kiev.msupport.controller.utils.ComboItem(e.getId(), e.getFullName()));
+        }
+        managerCombo.setItems(FXCollections.observableArrayList(it));
+
 //inputs config
         List<CategoryEntity> categoryEntities = db.findAll(CategoryEntity.class);
         List<ComboItem> comboItems = new ArrayList<ComboItem>();
@@ -205,7 +210,12 @@ public class IncomeTableController implements Initializable {
                         mtr = db.updateEntity(new MTREntity(category, t.getName(), units));
                     }
 
-                    IncomeEntity en = new IncomeEntity(mtr, t.getAmount(), t.getPrice(), dep, new Date(), db.manager);
+                    Manager manager = null;
+                    if (managerCombo.getValue()!=null) {
+                        manager = db.getEntity(Manager.class, managerCombo.getValue().getId());
+                    }
+
+                    IncomeEntity en = new IncomeEntity(mtr, t.getAmount(), t.getPrice(), dep, new Date(), manager);
                     db.updateEntity(en);
                 }
 

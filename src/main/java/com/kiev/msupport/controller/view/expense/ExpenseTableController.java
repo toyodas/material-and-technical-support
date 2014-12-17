@@ -52,9 +52,7 @@ public class ExpenseTableController implements Initializable {
     @FXML
     private Button addToDBB;
     @FXML
-    private ListView<String> presentNames;
-    @FXML
-    private Tooltip tooltip;
+    private ComboBox<ComboItem> managerCombo;
 
     MaterialsMngrBean db = Main.db;
 
@@ -62,9 +60,15 @@ public class ExpenseTableController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        List<Manager> managers = db.findAll(Manager.class);
+        List<ComboItem> comboItems = new ArrayList<ComboItem>();
+        for(Manager e:managers){
+            comboItems.add(new ComboItem(e.getId(), e.getFullName()));
+        }
+        managerCombo.setItems(FXCollections.observableArrayList(comboItems));
 //inputs config
         List<CategoryEntity> categoryEntities = db.findAll(CategoryEntity.class);
-        List<ComboItem> comboItems = new ArrayList<ComboItem>();
+        comboItems = new ArrayList<ComboItem>();
         for(CategoryEntity e:categoryEntities){
             comboItems.add(new ComboItem(e.getId(), e.getName()));
         }
@@ -154,7 +158,12 @@ public class ExpenseTableController implements Initializable {
                         mtr = db.updateEntity(new MTREntity(category, t.getName(), units));
                     }
 
-                    ExpenseEntity en = new ExpenseEntity(mtr, t.getAmount(), dep, new Date(), db.manager);
+                    Manager manager = null;
+                    if (managerCombo.getValue()!=null) {
+                        manager = db.getEntity(Manager.class, managerCombo.getValue().getId());
+                    }
+
+                    ExpenseEntity en = new ExpenseEntity(mtr, t.getAmount(), dep, new Date(), manager);
                     db.updateEntity(en);
                 }
 

@@ -5,7 +5,7 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="650.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.kiev.msupport.controller.view.analysis.AnalysisTableController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="790.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.kiev.msupport.controller.view.analysis.AnalysisTableController">
    <children>
       <SplitPane fx:id="snapshotArea" dividerPositions="0.08882521489971347" orientation="VERTICAL" prefHeight="700.0" prefWidth="650.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <items>
@@ -13,12 +13,13 @@
                <children>
                   <Button fx:id="addContragent" layoutX="348.0" layoutY="29.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="181.0" text="Добавить поставщика" />
                   <TextField fx:id="categoryName" layoutX="14.0" layoutY="29.0" prefHeight="25.0" prefWidth="171.0" promptText="Категория" />
-                  <ComboBox layoutX="192.0" layoutY="29.0" prefWidth="150.0" promptText="Исполнитель" />
+                  <ComboBox fx:id="managerCombo" layoutX="192.0" layoutY="29.0" prefWidth="150.0" promptText="Исполнитель" />
                   <Button fx:id="makeScreenshot" layoutX="536.0" layoutY="29.0" mnemonicParsing="false" text="Сохранить" />
                   <Label layoutX="14.0" layoutY="7.0" prefHeight="15.0" prefWidth="253.0" text="Номер аналитической ведомости: №" />
                   <Label fx:id="id" layoutX="267.0" layoutY="7.0" />
                   <Label layoutX="427.0" layoutY="7.0" text="Дата:" />
                   <Label fx:id="date" layoutX="475.0" layoutY="7.0" />
+                  <Button fx:id="openMultipleButton" layoutX="635.0" layoutY="29.0" mnemonicParsing="false" text="Импортировать..." />
                </children>
             </AnchorPane>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
